@@ -1,0 +1,33 @@
+name: Update Oracle
+
+on:
+  schedule:
+    - cron: 0 5 * * 1-5
+  workflow_dispatch:
+
+jobs:
+  run:
+    name: "Run Java Migration for Oracle"
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [ oracle18linuxamd64, oracle18linuxarm64, oracle18macosamd64, oracle18macosarm64, oracle18windowsamd64 ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-pom-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-pom-
+      - name: Set up Java 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - name: Run oracle
+        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=${{ matrix.profile }} --foojay.java.distribution=oracle"
+        env:
+          SDKMAN_RELEASE_CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
+          SDKMAN_RELEASE_CONSUMER_TOKEN: ${{ secrets.CONSUMER_TOKEN }}
