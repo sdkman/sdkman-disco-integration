@@ -13,7 +13,8 @@ public class VersionAdapter {
 
 	// @formatter:off
     private static final Map<String, String> FOOJAY_SDKMAN_CHECKSUM_TYPE_MAPPING = Map.ofEntries(
-            entry("sha1", "SHA-1"));
+            entry("sha1", "SHA-1"),
+			entry("sha256", "SHA-256"));
     // @formatter:on
 
 	public static VersionRequest toVersionRequest(String vendor, String version, Platform platform,
