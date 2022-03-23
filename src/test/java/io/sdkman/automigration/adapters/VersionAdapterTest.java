@@ -28,7 +28,7 @@ class VersionAdapterTest {
 				"https://github.com/bell-sw/Liberica/releases/download/8u322+6/bellsoft-jdk8u322+6-linux-amd64.tar.gz",
 				"813eb415bd91e5dcb846fea4ffcf07befb254f5a", "sha1");
 		var request = VersionAdapter.toVersionRequest("librca", "8.0.322", Platform.LINUX_64, idsResponse);
-		assertThat(this.json.write(request)).isStrictlyEqualToJson(SdkmanReleaseRequest.candidateWithChecksum());
+		assertThat(this.json.write(request)).isStrictlyEqualToJson(SdkmanReleaseRequest.candidateWithNoChecksum());
 	}
 
 	@Test

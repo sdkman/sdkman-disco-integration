@@ -53,7 +53,7 @@ class SdkmanDiscoMigrationTest {
 					foojayPackagesMockServer(mockServer, "8", FoojayResponse.liberica80322());
 					sdkmanBrokerMockServer(mockServer, HttpStatus.NOT_FOUND);
 					foojayIdsMockServer(mockServer, FoojayResponse.idsResponseWithChecksum());
-					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.candidateWithChecksum());
+					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.candidateWithNoChecksum());
 					commandLineRunner.run();
 					mockServer.verify();
 				});
