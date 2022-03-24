@@ -3,6 +3,7 @@ package io.sdkman.automigration.controllers;
 import io.sdkman.automigration.adapters.VersionAdapter;
 import io.sdkman.automigration.logic.Broker;
 import io.sdkman.automigration.adapters.PackageAdapter;
+import io.sdkman.automigration.logic.Package;
 import io.sdkman.automigration.logic.Release;
 import io.sdkman.automigration.http.FoojayClient;
 import io.sdkman.automigration.http.SdkmanClient;
@@ -11,8 +12,10 @@ import io.sdkman.automigration.properties.FoojayConfigurationProperties;
 import io.sdkman.automigration.properties.SdkmanConfigurationProperties;
 import io.sdkman.automigration.wire.in.PackageResponse;
 import io.sdkman.automigration.wire.in.ResultIdsResponse;
+import io.sdkman.automigration.wire.in.ResultPackageResponse;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -49,12 +52,18 @@ public class JavaMigration {
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 		var resultPackageResponse = this.foojayClient.queryPackages(this.foojayProperties.url(), foojayQueryParams);
+		// @formatter:off
 		resultPackageResponse.filter(payload -> payload.result() != null && !payload.result().isEmpty())
-				.flatMap(payload -> payload.result().stream().max(Comparator.comparing(PackageResponse::javaVersion)))
+				.map(ResultPackageResponse::result)
+				.stream()
+				.flatMap(Collection::stream)
+				.filter(Package::libericaFilenameDoesNotContainLite)
+				.max(Comparator.comparing(PackageResponse::javaVersion))
 				.ifPresent(packageResponse -> {
 					var sdkmanVersion = Version.format(packageResponse);
 					sdkmanVersion.ifPresent(processVersion(packageResponse));
 				});
+		// @formatter:on
 	}
 
 	private Consumer<String> processVersion(PackageResponse packageResponse) {

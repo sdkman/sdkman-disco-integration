@@ -36,8 +36,7 @@ class SdkmanDiscoMigrationTest {
             "sdkman.liberica.architecture=amd64",
             "sdkman.liberica.release-status=ga",
             "sdkman.liberica.archive-type=tar.gz",
-            "sdkman.liberica.operating-system=linux",
-			"sdkman.liberica.filename-exclusions=bellsoft-jdk.+.-linux-amd64-lite.tar.gz"};
+            "sdkman.liberica.operating-system=linux"};
     // @formatter:on
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
