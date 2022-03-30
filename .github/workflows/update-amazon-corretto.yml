@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        profile: [ corretto18linuxamd64, corretto18linuxarm64, corretto18macosamd64, corretto18macosarm64, corretto18windowsamd64]
+        java-version: [ 18 ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,7 +27,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Run amazon-corretto
-        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=${{ matrix.profile }} --foojay.java.distribution=corretto"
+        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--foojay.java.distribution=corretto --foojay.java.version=${{ matrix.java-version }} --foojay.java.release-status=ga"
         env:
           SDKMAN_RELEASE_CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
           SDKMAN_RELEASE_CONSUMER_TOKEN: ${{ secrets.CONSUMER_TOKEN }}

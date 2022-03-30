@@ -29,15 +29,16 @@ public class PackageAdapter {
             entry("zulu", "zulu"));
     // @formatter:on
 
-	public static Map<String, List<String>> toQueryParams(String distribution, VendorProperties properties) {
+	public static Map<String, List<String>> toQueryParams(String distribution, String version, String releaseStatus,
+			String os, boolean javafxBundled, VendorProperties.OS vendorOsProperties) {
 		// @formatter:off
-        return Map.of("version", List.of(properties.version()),
-                "release_status", List.of(properties.releaseStatus()),
-                "operating_system", List.of(properties.operatingSystem()),
-                "architecture", List.of(properties.architecture()),
-                "archive_type", List.of(properties.archiveType()),
+        return Map.of("version", List.of(version),
+                "release_status", List.of(releaseStatus),
+                "operating_system", List.of(os),
+                "architecture", List.of(vendorOsProperties.architecture()),
+                "archive_type", List.of(vendorOsProperties.archiveType()),
                 "distribution", List.of(distribution),
-                "javafx_bundled", List.of(String.valueOf(properties.javafxBundled())));
+                "javafx_bundled", List.of(String.valueOf(javafxBundled)));
         // @formatter:on
 	}
 

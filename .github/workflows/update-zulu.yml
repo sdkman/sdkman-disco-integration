@@ -11,8 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        profile: [ zulu18linuxamd64, zulu18linuxarm64, zulu18macosamd64, zulu18macosarm64, zulu18windowsamd64,
-                   zulu18fxlinuxamd64, zulu18fxlinuxarm64, zulu18fxmacosamd64, zulu18fxmacosarm64, zulu18fxwindowsamd64]
+        java-version: [ 18 ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -28,7 +27,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Run azul-zulu
-        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=${{ matrix.profile }} --foojay.java.distribution=zulu"
+        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--foojay.java.distribution=corretto --foojay.java.version=${{ matrix.java-version }} --foojay.java.release-status=ga"
         env:
           SDKMAN_RELEASE_CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
           SDKMAN_RELEASE_CONSUMER_TOKEN: ${{ secrets.CONSUMER_TOKEN }}

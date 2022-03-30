@@ -25,18 +25,29 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 class SdkmanDiscoMigrationTest {
 
+	private static final String TAR_GZ = "tar.gz";
+
+	private static final String LINUX = "linux";
+
+	private static final String AMD64 = "amd64";
+
+	private static final String ARM_64 = "arm64";
+
+	private static final String LINUX_64 = "linux64";
+
+	private static final String LINUX_ARM64 = "linuxarm64";
+
 	// @formatter:off
-    private final String[] propertyValues = {"spring.test.webclient.mockrestserviceserver.enabled=true",
+    private final String[] propertyValues = {
+			"spring.test.webclient.mockrestserviceserver.enabled=true",
             "foojay.url=http://localhost/disco/v3.0",
             "sdkman.broker.url=http://localhost/2/broker/download/java/{version}/{platform}",
             "sdkman.release.url=http://localhost/release",
             "foojay.java.distribution=liberica",
-            "spring.profiles.active=liberica18linuxamd64",
-            "sdkman.liberica.version=18",
-            "sdkman.liberica.architecture=amd64",
-            "sdkman.liberica.release-status=ga",
-            "sdkman.liberica.archive-type=tar.gz",
-            "sdkman.liberica.operating-system=linux"};
+			"foojay.java.version=18",
+			"foojay.java.release-status=ga",
+            "sdkman.liberica.linux[0].architecture=amd64",
+            "sdkman.liberica.linux[0].archive-type=tar.gz"};
     // @formatter:on
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
@@ -45,14 +56,22 @@ class SdkmanDiscoMigrationTest {
 
 	@Test
 	void testWithDistributionsAndSdkmanReleaseWithChecksum() {
-		this.contextRunner.withPropertyValues("sdkman.liberica.version=8", "sdkman.release.consumer-key=any-key",
-				"sdkman.release.consumer-token=any-token").run(context -> {
+		this.contextRunner.withPropertyValues("foojay.java.version=8", "sdkman.release.consumer-key=any-key",
+				"sdkman.release.consumer-token=any-token", "sdkman.liberica.linux[1].architecture=arm64",
+				"sdkman.liberica.linux[1].archive-type=tar.gz").run(context -> {
 					var mockServer = context.getBean(MockRestServiceServer.class);
 					var commandLineRunner = context.getBean(CommandLineRunner.class);
-					foojayPackagesMockServer(mockServer, "8", FoojayResponse.liberica80322());
-					sdkmanBrokerMockServer(mockServer, HttpStatus.NOT_FOUND);
-					foojayIdsMockServer(mockServer, FoojayResponse.idsResponseWithChecksum());
-					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.candidateWithNoChecksum());
+					foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64,
+							FoojayResponse.liberica80322amd64());
+					sdkmanBrokerMockServer(mockServer, HttpStatus.NOT_FOUND, LINUX_64);
+					foojayIdsMockServer(mockServer, FoojayResponse.idsResponseAmd64WithChecksum());
+					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.candidateAmd64WithNoChecksum());
+
+					foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, ARM_64,
+							FoojayResponse.liberica80322arm64());
+					sdkmanBrokerMockServer(mockServer, HttpStatus.NOT_FOUND, LINUX_ARM64);
+					foojayIdsMockServer(mockServer, FoojayResponse.idsResponseArm64WithChecksum());
+					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.candidateArm64WithNoChecksum());
 					commandLineRunner.run();
 					mockServer.verify();
 				});
@@ -60,14 +79,15 @@ class SdkmanDiscoMigrationTest {
 
 	@Test
 	void testWithDistributionsAndSdkmanReleaseWithNoChecksum() {
-		this.contextRunner.withPropertyValues("sdkman.liberica.version=8", "sdkman.release.consumer-key=any-key",
+		this.contextRunner.withPropertyValues("foojay.java.version=8", "sdkman.release.consumer-key=any-key",
 				"sdkman.release.consumer-token=any-token").run(context -> {
 					var mockServer = context.getBean(MockRestServiceServer.class);
 					var commandLineRunner = context.getBean(CommandLineRunner.class);
-					foojayPackagesMockServer(mockServer, "8", FoojayResponse.liberica80322());
-					sdkmanBrokerMockServer(mockServer, HttpStatus.NOT_FOUND);
+					foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64,
+							FoojayResponse.liberica80322amd64());
+					sdkmanBrokerMockServer(mockServer, HttpStatus.NOT_FOUND, LINUX_64);
 					foojayIdsMockServer(mockServer, FoojayResponse.idsResponseWithNoChecksum());
-					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.candidateWithNoChecksum());
+					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.candidateAmd64WithNoChecksum());
 					commandLineRunner.run();
 					mockServer.verify();
 				});
@@ -78,7 +98,7 @@ class SdkmanDiscoMigrationTest {
 		this.contextRunner.run(context -> {
 			var mockServer = context.getBean(MockRestServiceServer.class);
 			var commandLineRunner = context.getBean(CommandLineRunner.class);
-			foojayPackagesMockServer(mockServer, "18", FoojayResponse.empty());
+			foojayPackagesMockServer(mockServer, "18", TAR_GZ, LINUX, AMD64, FoojayResponse.empty());
 			commandLineRunner.run();
 			mockServer.verify();
 		});
@@ -86,11 +106,11 @@ class SdkmanDiscoMigrationTest {
 
 	@Test
 	void testWithDistributionsAndVersionFoundInSdkmanBroker() {
-		this.contextRunner.withPropertyValues("sdkman.liberica.version=8").run(context -> {
+		this.contextRunner.withPropertyValues("foojay.java.version=8").run(context -> {
 			var mockServer = context.getBean(MockRestServiceServer.class);
 			var commandLineRunner = context.getBean(CommandLineRunner.class);
-			foojayPackagesMockServer(mockServer, "8", FoojayResponse.liberica80322());
-			sdkmanBrokerMockServer(mockServer, HttpStatus.FOUND);
+			foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64, FoojayResponse.liberica80322amd64());
+			sdkmanBrokerMockServer(mockServer, HttpStatus.FOUND, LINUX_64);
 			commandLineRunner.run();
 			mockServer.verify();
 		});
@@ -98,10 +118,10 @@ class SdkmanDiscoMigrationTest {
 
 	@Test
 	void testWithDistributionsAndVersionIsNull() {
-		this.contextRunner.withPropertyValues("sdkman.liberica.version=8").run(context -> {
+		this.contextRunner.withPropertyValues("foojay.java.version=8").run(context -> {
 			var mockServer = context.getBean(MockRestServiceServer.class);
 			var commandLineRunner = context.getBean(CommandLineRunner.class);
-			foojayPackagesMockServer(mockServer, "8", FoojayResponse.liberica8());
+			foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64, FoojayResponse.liberica8());
 			commandLineRunner.run();
 			mockServer.verify();
 		});
@@ -109,10 +129,10 @@ class SdkmanDiscoMigrationTest {
 
 	@Test
 	void testWithDistributionsAndVersionIsGreaterThanExpectedSize() {
-		this.contextRunner.withPropertyValues("sdkman.liberica.version=8").run(context -> {
+		this.contextRunner.withPropertyValues("foojay.java.version=8").run(context -> {
 			var mockServer = context.getBean(MockRestServiceServer.class);
 			var commandLineRunner = context.getBean(CommandLineRunner.class);
-			foojayPackagesMockServer(mockServer, "8", FoojayResponse.libericaLongerJavaVersion());
+			foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64, FoojayResponse.libericaLongerJavaVersion());
 			commandLineRunner.run();
 			mockServer.verify();
 		});
@@ -130,11 +150,9 @@ class SdkmanDiscoMigrationTest {
 		// @formatter:on
 	}
 
-	private void sdkmanBrokerMockServer(MockRestServiceServer mockServer, HttpStatus httpStatus) {
-		mockServer
-				.expect(ExpectedCount.once(),
-						requestTo("http://localhost/2/broker/download/java/8.0.322-librca/linux64"))
-				.andRespond(withStatus(httpStatus));
+	private void sdkmanBrokerMockServer(MockRestServiceServer mockServer, HttpStatus httpStatus, String platform) {
+		var url = "http://localhost/2/broker/download/java/8.0.322-librca/" + platform;
+		mockServer.expect(ExpectedCount.once(), requestTo(url)).andRespond(withStatus(httpStatus));
 	}
 
 	private void foojayIdsMockServer(MockRestServiceServer mockServer, String response) {
@@ -144,7 +162,8 @@ class SdkmanDiscoMigrationTest {
 				.andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response));
 	}
 
-	private void foojayPackagesMockServer(MockRestServiceServer mockServer, String version, String response) {
+	private void foojayPackagesMockServer(MockRestServiceServer mockServer, String version, String archiveType,
+			String os, String architecture, String response) {
 		mockServer.expect(ExpectedCount.once(), request -> {
 			var uriComponents = UriComponentsBuilder.fromUri(request.getURI()).build();
 			assertThat(uriComponents.getPath()).isEqualTo("/disco/v3.0/packages");
@@ -155,12 +174,12 @@ class SdkmanDiscoMigrationTest {
                             .containsEntry("javafx_bundled", List.of("false"))
                             .containsEntry("directly_downloadable", List.of("true"))
                             .containsEntry("libc_type", List.of("glibc", "c_std_lib", "libc"))
-                            .containsEntry("archive_type", List.of("tar.gz"))
-                            .containsEntry("operating_system", List.of("linux"))
+                            .containsEntry("archive_type", List.of(archiveType))
+                            .containsEntry("operating_system", List.of(os))
                             .containsEntry("package_type", List.of("jdk"))
                             .containsEntry("release_status", List.of("ga"))
                             .containsEntry("version", List.of(version))
-                            .containsEntry("architecture", List.of("amd64"))
+                            .containsEntry("architecture", List.of(architecture))
                             .containsEntry("latest", List.of("per_version"));
                     // @formatter:on
 		}).andExpect(method(HttpMethod.GET))

@@ -1,4 +1,4 @@
-name: Update BellSoft Liberica
+name: Update FX BellSoft Liberica
 
 on:
   schedule:
@@ -27,7 +27,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Run bellsoft-liberica
-        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--foojay.java.distribution=liberica --foojay.java.version=${{ matrix.java-version }} --foojay.java.release-status=ga"
+        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--foojay.java.distribution=liberica --foojay.java.version=${{ matrix.java-version }} --foojay.java.release-status=ga --foojay.java.javafx-bundled=true"
         env:
           SDKMAN_RELEASE_CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
           SDKMAN_RELEASE_CONSUMER_TOKEN: ${{ secrets.CONSUMER_TOKEN }}

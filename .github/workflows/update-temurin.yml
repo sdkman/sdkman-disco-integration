@@ -1,4 +1,4 @@
-name: Update BellSoft Liberica
+name: Update Eclipse Temurin
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   run:
-    name: "Run Java Migration for BellSoft Liberica"
+    name: "Run Java Migration for Eclipse Temurin"
     strategy:
       fail-fast: false
       matrix:
@@ -26,8 +26,8 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-      - name: Run bellsoft-liberica
-        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--foojay.java.distribution=liberica --foojay.java.version=${{ matrix.java-version }} --foojay.java.release-status=ga"
+      - name: Run eclipse-temurin
+        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--foojay.java.distribution=temurin --foojay.java.version=${{ matrix.java-version }} --foojay.java.release-status=ga"
         env:
           SDKMAN_RELEASE_CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
           SDKMAN_RELEASE_CONSUMER_TOKEN: ${{ secrets.CONSUMER_TOKEN }}

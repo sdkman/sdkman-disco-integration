@@ -11,28 +11,45 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.util.List;
 
 @Component
 public class CommandLine {
 
+	private final Environment environment;
+
 	private final JavaMigration javaMigration;
 
-	public CommandLine(JavaMigration javaMigration) {
+	public CommandLine(Environment environment, JavaMigration javaMigration) {
+		this.environment = environment;
 		this.javaMigration = javaMigration;
 	}
 
 	@Bean
-	CommandLineRunner runner(Environment environment) {
+	CommandLineRunner runner() {
 		return args -> {
-			var distribution = environment.getRequiredProperty("foojay.java.distribution", String.class);
-			var queryParamsByDistribution = Binder.get(environment)
+			var distribution = this.environment.getRequiredProperty("foojay.java.distribution", String.class);
+			var version = this.environment.getRequiredProperty("foojay.java.version", String.class);
+			var releaseStatus = this.environment.getRequiredProperty("foojay.java.release-status", String.class);
+			var javafxBundled = this.environment.getProperty("foojay.java.javafx-bundled", Boolean.class, false);
+
+			var vendorProperties = Binder.get(this.environment)
 					.bind(ConfigurationPropertyName.of("sdkman").append(distribution.replace("_", "-")),
 							Bindable.of(VendorProperties.class))
-					.map(vendorProperties -> PackageAdapter.toQueryParams(distribution, vendorProperties))
-					.orElse(Collections.emptyMap());
-			this.javaMigration.execute(queryParamsByDistribution);
+					.orElse(null);
+
+			process(vendorProperties.linux(), distribution, version, releaseStatus, "linux", javafxBundled);
+			process(vendorProperties.macos(), distribution, version, releaseStatus, "macos", javafxBundled);
+			process(vendorProperties.windows(), distribution, version, releaseStatus, "windows", javafxBundled);
 		};
+	}
+
+	void process(List<VendorProperties.OS> os, String distribution, String version, String releaseStatus,
+			String operatingSystem, boolean javafxBundled) {
+		if (os != null) {
+			os.stream().map(vendorProperties1 -> PackageAdapter.toQueryParams(distribution, version, releaseStatus,
+					operatingSystem, javafxBundled, vendorProperties1)).forEach(this.javaMigration::execute);
+		}
 	}
 
 }

@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        profile: [ oracle18linuxamd64, oracle18linuxarm64, oracle18macosamd64, oracle18macosarm64, oracle18windowsamd64 ]
+        java-version: [ 18 ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,7 +27,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Run oracle
-        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=${{ matrix.profile }} --foojay.java.distribution=oracle"
+        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--foojay.java.distribution=oracle --foojay.java.version=${{ matrix.java-version }} --foojay.java.release-status=ga"
         env:
           SDKMAN_RELEASE_CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
           SDKMAN_RELEASE_CONSUMER_TOKEN: ${{ secrets.CONSUMER_TOKEN }}

@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        profile: [ sap_machine18linuxamd64, sap_machine18linuxarm64, sap_machine18macosamd64, sap_machine18macosarm64, sap_machine18windowsamd64 ]
+        java-version: [ 18 ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,7 +27,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Run sap-machine
-        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=${{ matrix.profile }} --foojay.java.distribution=sap_machine"
+        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--foojay.java.distribution=sap_machine --foojay.java.version=${{ matrix.java-version }} --foojay.java.release-status=ga"
         env:
           SDKMAN_RELEASE_CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
           SDKMAN_RELEASE_CONSUMER_TOKEN: ${{ secrets.CONSUMER_TOKEN }}
