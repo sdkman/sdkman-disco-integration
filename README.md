@@ -9,6 +9,7 @@ List of supported vendors:
 * Azul Zulu
 * BellSoft Liberica
 * IBM Semeru
+* Microsoft OpenJDK
 * Oracle
 * SapMachine
 * Eclipse Temurin
