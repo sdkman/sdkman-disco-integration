@@ -16,8 +16,7 @@ public class Version {
 		if (matcher.find()) {
 			var javaVersion = matcher.group();
 			return switch (packageResponse.distribution()) {
-			case "liberica" -> libericaVersion(javaVersion, packageResponse);
-			case "zulu" -> zuluVersion(javaVersion, packageResponse);
+			case "liberica", "zulu" -> javaFxVersion(javaVersion, packageResponse);
 			case "oracle_open_jdk" -> openjdkVersion(javaVersion, packageResponse);
 			default -> Optional.of(javaVersion);
 			};
@@ -25,15 +24,7 @@ public class Version {
 		return Optional.empty();
 	}
 
-	private static Optional<String> libericaVersion(String javaVersion, PackageResponse packageResponse) {
-		if (packageResponse.javafxBundled()) {
-			var javaVersionWithFxSuffix = javaVersion + ".fx";
-			return Optional.of(javaVersionWithFxSuffix);
-		}
-		return Optional.of(javaVersion);
-	}
-
-	private static Optional<String> zuluVersion(String javaVersion, PackageResponse packageResponse) {
+	private static Optional<String> javaFxVersion(String javaVersion, PackageResponse packageResponse) {
 		if (packageResponse.javafxBundled()) {
 			var javaVersionWithFxSuffix = javaVersion + ".fx";
 			return Optional.of(javaVersionWithFxSuffix);
