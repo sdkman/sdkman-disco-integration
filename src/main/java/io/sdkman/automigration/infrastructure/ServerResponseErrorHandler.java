@@ -1,6 +1,7 @@
 package io.sdkman.automigration.infrastructure;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 
 public class ServerResponseErrorHandler extends DefaultResponseErrorHandler {
@@ -12,7 +13,7 @@ public class ServerResponseErrorHandler extends DefaultResponseErrorHandler {
 	}
 
 	@Override
-	protected boolean hasError(HttpStatus statusCode) {
+	protected boolean hasError(HttpStatusCode statusCode) {
 		return statusCode.is5xxServerError();
 	}
 
