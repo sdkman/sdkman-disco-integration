@@ -44,7 +44,7 @@ class SdkmanDiscoMigrationTest {
             "sdkman.broker.url=http://localhost/2/broker/download/java/{version}/{platform}",
             "sdkman.release.url=http://localhost/release",
             "foojay.java.distribution=liberica",
-			"foojay.java.version=18",
+			"foojay.distribution.version=18",
 			"foojay.java.release-status=ga",
             "sdkman.liberica.linux[0].architecture=amd64",
             "sdkman.liberica.linux[0].archive-type=tar.gz"};
@@ -56,7 +56,7 @@ class SdkmanDiscoMigrationTest {
 
 	@Test
 	void testWithDistributionsAndSdkmanReleaseWithChecksum() {
-		this.contextRunner.withPropertyValues("foojay.java.version=8", "sdkman.release.consumer-key=any-key",
+		this.contextRunner.withPropertyValues("foojay.distribution.version=8", "sdkman.release.consumer-key=any-key",
 				"sdkman.release.consumer-token=any-token", "sdkman.liberica.linux[1].architecture=arm64",
 				"sdkman.liberica.linux[1].archive-type=tar.gz").run(context -> {
 					var mockServer = context.getBean(MockRestServiceServer.class);
@@ -79,7 +79,7 @@ class SdkmanDiscoMigrationTest {
 
 	@Test
 	void testWithDistributionsAndSdkmanReleaseWithNoChecksum() {
-		this.contextRunner.withPropertyValues("foojay.java.version=8", "sdkman.release.consumer-key=any-key",
+		this.contextRunner.withPropertyValues("foojay.distribution.version=8", "sdkman.release.consumer-key=any-key",
 				"sdkman.release.consumer-token=any-token").run(context -> {
 					var mockServer = context.getBean(MockRestServiceServer.class);
 					var commandLineRunner = context.getBean(CommandLineRunner.class);
@@ -106,7 +106,7 @@ class SdkmanDiscoMigrationTest {
 
 	@Test
 	void testWithDistributionsAndVersionFoundInSdkmanBroker() {
-		this.contextRunner.withPropertyValues("foojay.java.version=8").run(context -> {
+		this.contextRunner.withPropertyValues("foojay.distribution.version=8").run(context -> {
 			var mockServer = context.getBean(MockRestServiceServer.class);
 			var commandLineRunner = context.getBean(CommandLineRunner.class);
 			foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64, FoojayResponse.liberica80322amd64());
@@ -118,7 +118,7 @@ class SdkmanDiscoMigrationTest {
 
 	@Test
 	void testWithDistributionsAndVersionIsNull() {
-		this.contextRunner.withPropertyValues("foojay.java.version=8").run(context -> {
+		this.contextRunner.withPropertyValues("foojay.distribution.version=8").run(context -> {
 			var mockServer = context.getBean(MockRestServiceServer.class);
 			var commandLineRunner = context.getBean(CommandLineRunner.class);
 			foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64, FoojayResponse.liberica8());
@@ -129,7 +129,7 @@ class SdkmanDiscoMigrationTest {
 
 	@Test
 	void testWithDistributionsAndVersionIsGreaterThanExpectedSize() {
-		this.contextRunner.withPropertyValues("foojay.java.version=8").run(context -> {
+		this.contextRunner.withPropertyValues("foojay.distribution.version=8").run(context -> {
 			var mockServer = context.getBean(MockRestServiceServer.class);
 			var commandLineRunner = context.getBean(CommandLineRunner.class);
 			foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64, FoojayResponse.libericaLongerJavaVersion());

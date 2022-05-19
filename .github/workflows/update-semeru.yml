@@ -22,7 +22,7 @@ jobs:
           java-version: 17
           cache: 'maven'
       - name: Run ibm semeru
-        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--foojay.java.distribution=semeru --foojay.java.version=${{ matrix.java-version }} --foojay.java.release-status=ga"
+        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--foojay.java.distribution=semeru --foojay.distribution.version=${{ matrix.java-version }} --foojay.java.release-status=ga"
         env:
           SDKMAN_RELEASE_CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
           SDKMAN_RELEASE_CONSUMER_TOKEN: ${{ secrets.CONSUMER_TOKEN }}

@@ -2,6 +2,7 @@ package io.sdkman.automigration.entrypoints;
 
 import io.sdkman.automigration.adapters.PackageAdapter;
 import io.sdkman.automigration.controllers.JavaMigration;
+import io.sdkman.automigration.models.FoojayQueryParams;
 import io.sdkman.automigration.models.VendorProperties;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -29,26 +30,33 @@ public class CommandLine {
 	CommandLineRunner runner() {
 		return args -> {
 			var distribution = this.environment.getRequiredProperty("foojay.java.distribution", String.class);
-			var version = this.environment.getRequiredProperty("foojay.java.version", String.class);
+			var version = this.environment.getRequiredProperty("foojay.distribution.version", String.class);
 			var releaseStatus = this.environment.getRequiredProperty("foojay.java.release-status", String.class);
 			var javafxBundled = this.environment.getProperty("foojay.java.javafx-bundled", Boolean.class, false);
+			var javaVersion = this.environment.getProperty("foojay.java.version", String.class);
 
 			var vendorProperties = Binder.get(this.environment)
 					.bind(ConfigurationPropertyName.of("sdkman").append(distribution.replace("_", "-")),
 							Bindable.of(VendorProperties.class))
 					.orElse(null);
 
-			process(vendorProperties.linux(), distribution, version, releaseStatus, "linux", javafxBundled);
-			process(vendorProperties.macos(), distribution, version, releaseStatus, "macos", javafxBundled);
-			process(vendorProperties.windows(), distribution, version, releaseStatus, "windows", javafxBundled);
+			process(vendorProperties.linux(), distribution, version, javaVersion, releaseStatus, "linux",
+					javafxBundled);
+			process(vendorProperties.macos(), distribution, version, javaVersion, releaseStatus, "macos",
+					javafxBundled);
+			process(vendorProperties.windows(), distribution, version, javaVersion, releaseStatus, "windows",
+					javafxBundled);
 		};
 	}
 
-	void process(List<VendorProperties.OS> os, String distribution, String version, String releaseStatus,
-			String operatingSystem, boolean javafxBundled) {
+	void process(List<VendorProperties.OS> os, String distribution, String version, String javaVersion,
+			String releaseStatus, String operatingSystem, boolean javafxBundled) {
 		if (os != null) {
-			os.stream().map(vendorProperties1 -> PackageAdapter.toQueryParams(distribution, version, releaseStatus,
-					operatingSystem, javafxBundled, vendorProperties1)).forEach(this.javaMigration::execute);
+			os.stream().map(vendorProperties -> {
+				var foojayQueryParams = new FoojayQueryParams(distribution, version, javaVersion, releaseStatus,
+						operatingSystem, javafxBundled, vendorProperties);
+				return PackageAdapter.toQueryParams(foojayQueryParams);
+			}).forEach(this.javaMigration::execute);
 		}
 	}
 
