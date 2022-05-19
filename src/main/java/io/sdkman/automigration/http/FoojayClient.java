@@ -21,7 +21,7 @@ public class FoojayClient {
                     "libc_type", List.of("glibc", "c_std_lib", "libc"),
                     "bitness", List.of("64"),
                     "directly_downloadable", List.of("true"),
-                    "latest", List.of("per_version"));
+                    "latest", List.of("available"));
 	// @formatter:on
 
 	private final RestTemplate restTemplate;

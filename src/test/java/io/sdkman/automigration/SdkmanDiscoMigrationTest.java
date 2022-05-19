@@ -180,7 +180,7 @@ class SdkmanDiscoMigrationTest {
                             .containsEntry("release_status", List.of("ga"))
                             .containsEntry("version", List.of(version))
                             .containsEntry("architecture", List.of(architecture))
-                            .containsEntry("latest", List.of("per_version"));
+                            .containsEntry("latest", List.of("available"));
                     // @formatter:on
 		}).andExpect(method(HttpMethod.GET))
 				.andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response));
