@@ -285,4 +285,95 @@ public class FoojayResponse {
 				""";
 	}
 
+	public static String libericaNik80322amd64() {
+		return """
+				{
+				    "result":[
+				       {
+				          "id":"fd3f88feb5963a9a45a5cefaf58ee0b7",
+				          "archive_type":"tar.gz",
+				          "distribution":"liberica_native",
+				          "major_version":22,
+				          "java_version":"22.1",
+				          "distribution_version":"22.1",
+				          "jdk_version":17,
+				          "latest_build_available":true,
+				          "release_status":"ga",
+				          "term_of_support":"lts",
+				          "operating_system":"linux",
+				          "lib_c_type":"glibc",
+				          "architecture":"amd64",
+				          "fpu":"unknown",
+				          "package_type":"jdk",
+				          "javafx_bundled":false,
+				          "directly_downloadable":true,
+				          "filename":"bellsoft-liberica-vm-openjdk17.0.3+7-22.1.0+1-linux-amd64.tar.gz",
+				          "links":{
+				             "pkg_info_uri":"https://api.foojay.io/disco/v3.0/ids/8d2136c6472ce970f80ee4fedcc92f99",
+				             "pkg_download_redirect":"https://api.foojay.io/disco/v3.0/ids/8d2136c6472ce970f80ee4fedcc92f99/redirect"
+				          },
+				          "free_use_in_production":true,
+				          "tck_tested":"unknown",
+				          "tck_cert_uri":"",
+				          "aqavit_certified":"unknown",
+				          "aqavit_cert_uri":"",
+				          "size":459775291,
+				          "feature":[ ]
+				       },
+				       {
+				          "id":"e5cf097477c95cb9896de5d10f8470b5",
+				          "archive_type":"tar.gz",
+				          "distribution":"liberica_native",
+				          "major_version":22,
+				          "java_version":"22.0.0.2",
+				          "distribution_version":"22.0.0.2",
+				          "jdk_version":17,
+				          "latest_build_available":true,
+				          "release_status":"ga",
+				          "term_of_support":"lts",
+				          "operating_system":"linux",
+				          "lib_c_type":"glibc",
+				          "architecture":"amd64",
+				          "fpu":"unknown",
+				          "package_type":"jdk",
+				          "javafx_bundled":false,
+				          "directly_downloadable":true,
+				          "filename":"bellsoft-liberica-vm-openjdk17-22.0.0.2-linux-amd64.tar.gz",
+				          "links":{
+				             "pkg_info_uri":"https://api.foojay.io/disco/v3.0/ids/e5cf097477c95cb9896de5d10f8470b5",
+				             "pkg_download_redirect":"https://api.foojay.io/disco/v3.0/ids/e5cf097477c95cb9896de5d10f8470b5/redirect"
+				          },
+				          "free_use_in_production":true,
+				          "tck_tested":"unknown",
+				          "tck_cert_uri":"",
+				          "aqavit_certified":"unknown",
+				          "aqavit_cert_uri":"",
+				          "size":444562306,
+				          "feature":[ ]
+				       }
+				    ],
+				    "message":"2 package(s) found"
+				 }
+				""";
+	}
+
+	public static String libericaNikIdsResponseWithNoChecksum() {
+		return """
+				{
+				    "result":[
+				       {
+				          "filename":"bellsoft-liberica-vm-openjdk17.0.3+7-22.1.0+1-linux-amd64.tar.gz",
+				          "direct_download_uri":"https://download.bell-sw.com/vm/22.1.0/bellsoft-liberica-vm-openjdk17.0.3+7-22.1.0+1-linux-amd64.tar.gz",
+				          "download_site_uri":"",
+				          "signature_uri":"",
+				          "checksum_uri":"",
+				          "checksum":"ccf398d93b5c472262e1c82d0328226bbe04368b",
+				          "checksum_type":"sha1"
+				       }
+				    ],
+				    "message":""
+				 }
+				""";
+	}
+
 }

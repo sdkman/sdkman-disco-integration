@@ -11,7 +11,7 @@ class VersionTest {
 
 	@Test
 	void testDefault() {
-		var packageResponse = new PackageResponse("corretto", "x64", "11.0.14.1+1", "linux", "filename.zip", "ga",
+		var packageResponse = new PackageResponse("corretto", "x64", "11.0.14.1+1", null, "linux", "filename.zip", "ga",
 				false, null);
 		var version = Version.format(packageResponse);
 		assertThat(version).isEqualTo(Optional.of("11.0.14.1"));
@@ -19,7 +19,7 @@ class VersionTest {
 
 	@Test
 	void testLiberica() {
-		var packageResponse = new PackageResponse("liberica", "x64", "11.0.14.1+1", "linux", "filename.zip", "ga",
+		var packageResponse = new PackageResponse("liberica", "x64", "11.0.14.1+1", null, "linux", "filename.zip", "ga",
 				false, null);
 		var version = Version.format(packageResponse);
 		assertThat(version).isEqualTo(Optional.of("11.0.14.1"));
@@ -27,42 +27,50 @@ class VersionTest {
 
 	@Test
 	void testLibericaFX() {
-		var packageResponse = new PackageResponse("liberica", "x64", "11.0.14.1+1", "linux", "filename.zip", "ga", true,
-				null);
+		var packageResponse = new PackageResponse("liberica", "x64", "11.0.14.1+1", null, "linux", "filename.zip", "ga",
+				true, null);
 		var version = Version.format(packageResponse);
 		assertThat(version).isEqualTo(Optional.of("11.0.14.1.fx"));
 	}
 
 	@Test
 	void testOpen() {
-		var packageResponse = new PackageResponse("oracle_open_jdk", "x64", "11.0.14.1", "linux", "filename.zip", "ga",
-				false, null);
+		var packageResponse = new PackageResponse("oracle_open_jdk", "x64", "11.0.14.1", null, "linux", "filename.zip",
+				"ga", false, null);
 		var version = Version.format(packageResponse);
 		assertThat(version).isEqualTo(Optional.of("11.0.14.1"));
 	}
 
 	@Test
 	void testOpenEa() {
-		var packageResponse = new PackageResponse("oracle_open_jdk", "x64", "18-ea+3", "linux", "filename.zip", "ea",
-				false, null);
+		var packageResponse = new PackageResponse("oracle_open_jdk", "x64", "18-ea+3", null, "linux", "filename.zip",
+				"ea", false, null);
 		var version = Version.format(packageResponse);
 		assertThat(version).isEqualTo(Optional.of("18.ea.3"));
 	}
 
 	@Test
 	void testZulu() {
-		var packageResponse = new PackageResponse("zulu", "x64", "11.0.14.1+1", "linux", "filename.zip", "ga", false,
-				null);
+		var packageResponse = new PackageResponse("zulu", "x64", "11.0.14.1+1", null, "linux", "filename.zip", "ga",
+				false, null);
 		var version = Version.format(packageResponse);
 		assertThat(version).isEqualTo(Optional.of("11.0.14.1"));
 	}
 
 	@Test
 	void testZuluFx() {
-		var packageResponse = new PackageResponse("zulu", "x64", "11.0.14.1+1", "linux", "filename.zip", "ga", true,
-				null);
+		var packageResponse = new PackageResponse("zulu", "x64", "11.0.14.1+1", null, "linux", "filename.zip", "ga",
+				true, null);
 		var version = Version.format(packageResponse);
 		assertThat(version).isEqualTo(Optional.of("11.0.14.1.fx"));
+	}
+
+	@Test
+	void testGraalVm() {
+		var packageResponse = new PackageResponse("liberica_native", "x64", "22.1", "17", "linux", "filename.zip", "ga",
+				false, null);
+		var version = Version.format(packageResponse);
+		assertThat(version).isEqualTo(Optional.of("22.1.r17"));
 	}
 
 }

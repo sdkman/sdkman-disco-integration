@@ -41,4 +41,16 @@ public class SdkmanReleaseRequest {
 				""";
 	}
 
+	public static String libericaNikCandidateAmd64WithNoChecksum() {
+		return """
+				{
+				    "candidate": "java",
+				    "version": "22.1.r17",
+				    "vendor": "nik",
+				    "url": "https://download.bell-sw.com/vm/22.1.0/bellsoft-liberica-vm-openjdk17.0.3+7-22.1.0+1-linux-amd64.tar.gz",
+				    "platform": "LINUX_64"
+				}
+				""";
+	}
+
 }

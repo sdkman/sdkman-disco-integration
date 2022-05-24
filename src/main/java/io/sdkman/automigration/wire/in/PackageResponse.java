@@ -7,6 +7,8 @@ public record PackageResponse(String distribution,
                               String architecture,
                               @JsonProperty("java_version")
                               String javaVersion,
+                              @JsonProperty("jdk_version")
+                              String jdkVersion,
                               @JsonProperty("operating_system")
                               String operatingSystem,
                               String filename,

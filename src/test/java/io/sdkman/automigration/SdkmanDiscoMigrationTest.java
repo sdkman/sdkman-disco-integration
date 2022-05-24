@@ -15,7 +15,9 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.Map;
 
+import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
@@ -63,13 +65,13 @@ class SdkmanDiscoMigrationTest {
 					var commandLineRunner = context.getBean(CommandLineRunner.class);
 					foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64,
 							FoojayResponse.liberica80322amd64());
-					sdkmanBrokerMockServer(mockServer, HttpStatus.NOT_FOUND, LINUX_64);
+					sdkmanBrokerMockServer(mockServer, "8.0.322-librca", HttpStatus.NOT_FOUND, LINUX_64);
 					foojayIdsMockServer(mockServer, FoojayResponse.idsResponseAmd64WithChecksum());
 					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.candidateAmd64WithNoChecksum());
 
 					foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, ARM_64,
 							FoojayResponse.liberica80322arm64());
-					sdkmanBrokerMockServer(mockServer, HttpStatus.NOT_FOUND, LINUX_ARM64);
+					sdkmanBrokerMockServer(mockServer, "8.0.322-librca", HttpStatus.NOT_FOUND, LINUX_ARM64);
 					foojayIdsMockServer(mockServer, FoojayResponse.idsResponseArm64WithChecksum());
 					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.candidateArm64WithNoChecksum());
 					commandLineRunner.run();
@@ -85,7 +87,7 @@ class SdkmanDiscoMigrationTest {
 					var commandLineRunner = context.getBean(CommandLineRunner.class);
 					foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64,
 							FoojayResponse.liberica80322amd64());
-					sdkmanBrokerMockServer(mockServer, HttpStatus.NOT_FOUND, LINUX_64);
+					sdkmanBrokerMockServer(mockServer, "8.0.322-librca", HttpStatus.NOT_FOUND, LINUX_64);
 					foojayIdsMockServer(mockServer, FoojayResponse.idsResponseWithNoChecksum());
 					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.candidateAmd64WithNoChecksum());
 					commandLineRunner.run();
@@ -110,7 +112,7 @@ class SdkmanDiscoMigrationTest {
 			var mockServer = context.getBean(MockRestServiceServer.class);
 			var commandLineRunner = context.getBean(CommandLineRunner.class);
 			foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64, FoojayResponse.liberica80322amd64());
-			sdkmanBrokerMockServer(mockServer, HttpStatus.FOUND, LINUX_64);
+			sdkmanBrokerMockServer(mockServer, "8.0.322-librca", HttpStatus.FOUND, LINUX_64);
 			commandLineRunner.run();
 			mockServer.verify();
 		});
@@ -138,6 +140,24 @@ class SdkmanDiscoMigrationTest {
 		});
 	}
 
+	@Test
+	void testWithGraalVmDistributionsAndSdkmanReleaseWithNoChecksum() {
+		this.contextRunner.withPropertyValues("foojay.distribution.version=22", "foojay.java.version=17",
+				"foojay.java.distribution=liberica_native", "sdkman.liberica_native.linux[0].architecture=amd64",
+				"sdkman.liberica_native.linux[0].archive-type=tar.gz", "sdkman.release.consumer-key=any-key",
+				"sdkman.release.consumer-token=any-token").run(context -> {
+					var mockServer = context.getBean(MockRestServiceServer.class);
+					var commandLineRunner = context.getBean(CommandLineRunner.class);
+					foojayPackagesMockServer(mockServer, "22", TAR_GZ, LINUX, AMD64,
+							FoojayResponse.libericaNik80322amd64());
+					sdkmanBrokerMockServer(mockServer, "22.1.r17-nik", HttpStatus.NOT_FOUND, LINUX_64);
+					foojayIdsMockServer(mockServer, FoojayResponse.libericaNikIdsResponseWithNoChecksum());
+					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.libericaNikCandidateAmd64WithNoChecksum());
+					commandLineRunner.run();
+					mockServer.verify();
+				});
+	}
+
 	private void sdkmanReleaseMockServer(MockRestServiceServer mockServer, String request) {
 		// @formatter:off
 		mockServer.expect(ExpectedCount.once(), requestTo("http://localhost/release"))
@@ -150,8 +170,9 @@ class SdkmanDiscoMigrationTest {
 		// @formatter:on
 	}
 
-	private void sdkmanBrokerMockServer(MockRestServiceServer mockServer, HttpStatus httpStatus, String platform) {
-		var url = "http://localhost/2/broker/download/java/8.0.322-librca/" + platform;
+	private void sdkmanBrokerMockServer(MockRestServiceServer mockServer, String version, HttpStatus httpStatus,
+			String platform) {
+		var url = "http://localhost/2/broker/download/java/" + version + "/" + platform;
 		mockServer.expect(ExpectedCount.once(), requestTo(url)).andRespond(withStatus(httpStatus));
 	}
 
@@ -166,24 +187,51 @@ class SdkmanDiscoMigrationTest {
 			String os, String architecture, String response) {
 		mockServer.expect(ExpectedCount.once(), request -> {
 			var uriComponents = UriComponentsBuilder.fromUri(request.getURI()).build();
+			var expectedQueryParams = uriComponents.getQueryParams().containsKey("java_version")
+					? graalVmDistributionQueryParams(version, archiveType, os, architecture)
+					: javaDistributionQueryParams(version, archiveType, os, architecture);
 			assertThat(uriComponents.getPath()).isEqualTo("/disco/v3.0/packages");
-			// @formatter:off
-                    assertThat(uriComponents.getQueryParams())
-                            .containsEntry("distribution", List.of("liberica"))
-                            .containsEntry("bitness", List.of("64"))
-                            .containsEntry("javafx_bundled", List.of("false"))
-                            .containsEntry("directly_downloadable", List.of("true"))
-                            .containsEntry("libc_type", List.of("glibc", "c_std_lib", "libc"))
-                            .containsEntry("archive_type", List.of(archiveType))
-                            .containsEntry("operating_system", List.of(os))
-                            .containsEntry("package_type", List.of("jdk"))
-                            .containsEntry("release_status", List.of("ga"))
-                            .containsEntry("version", List.of(version))
-                            .containsEntry("architecture", List.of(architecture))
-                            .containsEntry("latest", List.of("available"));
-                    // @formatter:on
+			assertThat(uriComponents.getQueryParams()).containsAllEntriesOf(expectedQueryParams);
+
 		}).andExpect(method(HttpMethod.GET))
 				.andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response));
+	}
+
+	private static Map<String, List<String>> javaDistributionQueryParams(String version, String archiveType, String os,
+			String architecture) {
+		// @formatter:off
+		return Map.ofEntries(entry("distribution", List.of("liberica")),
+				entry("bitness", List.of("64")),
+				entry("javafx_bundled", List.of("false")),
+				entry("directly_downloadable", List.of("true")),
+				entry("libc_type", List.of("glibc", "c_std_lib", "libc")),
+				entry("archive_type", List.of(archiveType)),
+				entry("operating_system", List.of(os)),
+				entry("package_type", List.of("jdk")),
+				entry("release_status", List.of("ga")),
+				entry("version", List.of(version)),
+				entry("architecture", List.of(architecture)),
+				entry("latest", List.of("available")));
+		// @formatter:on
+	}
+
+	private static Map<String, List<String>> graalVmDistributionQueryParams(String version, String archiveType,
+			String os, String architecture) {
+		// @formatter:off
+		return Map.ofEntries(entry("distribution", List.of("liberica_native")),
+				entry("java_version", List.of("17")),
+				entry("bitness", List.of("64")),
+				entry("javafx_bundled", List.of("false")),
+				entry("directly_downloadable", List.of("true")),
+				entry("libc_type", List.of("glibc", "c_std_lib", "libc")),
+				entry("archive_type", List.of(archiveType)),
+				entry("operating_system", List.of(os)),
+				entry("package_type", List.of("jdk")),
+				entry("release_status", List.of("ga")),
+				entry("version", List.of(version)),
+				entry("architecture", List.of(architecture)),
+				entry("latest", List.of("available")));
+		// @formatter:on
 	}
 
 }
