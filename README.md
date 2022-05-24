@@ -8,6 +8,7 @@ List of supported vendors:
 * Amazon Corretto
 * Azul Zulu
 * BellSoft Liberica
+* BellSoft Liberica Native Image Kit
 * IBM Semeru
 * Microsoft OpenJDK
 * Oracle
