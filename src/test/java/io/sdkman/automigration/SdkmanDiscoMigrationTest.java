@@ -187,7 +187,7 @@ class SdkmanDiscoMigrationTest {
 			String os, String architecture, String response) {
 		mockServer.expect(ExpectedCount.once(), request -> {
 			var uriComponents = UriComponentsBuilder.fromUri(request.getURI()).build();
-			var expectedQueryParams = uriComponents.getQueryParams().containsKey("java_version")
+			var expectedQueryParams = uriComponents.getQueryParams().containsKey("jdk_version")
 					? graalVmDistributionQueryParams(version, archiveType, os, architecture)
 					: javaDistributionQueryParams(version, archiveType, os, architecture);
 			assertThat(uriComponents.getPath()).isEqualTo("/disco/v3.0/packages");
@@ -219,7 +219,7 @@ class SdkmanDiscoMigrationTest {
 			String os, String architecture) {
 		// @formatter:off
 		return Map.ofEntries(entry("distribution", List.of("liberica_native")),
-				entry("java_version", List.of("17")),
+				entry("jdk_version", List.of("17")),
 				entry("bitness", List.of("64")),
 				entry("javafx_bundled", List.of("false")),
 				entry("directly_downloadable", List.of("true")),

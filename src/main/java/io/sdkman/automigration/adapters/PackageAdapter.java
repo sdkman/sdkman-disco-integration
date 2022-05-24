@@ -56,7 +56,7 @@ public class PackageAdapter {
 
 	private static Map<String, List<String>> addQueryParamsIfGraalVm(String distribution, String javaVersion) {
 		if (FOOJAY_SDKMAN_GRAALVM_VENDOR_MAPPING.containsKey(distribution)) {
-			return Map.of("java_version", List.of(javaVersion));
+			return Map.of("jdk_version", List.of(javaVersion));
 		}
 		return Collections.emptyMap();
 	}
