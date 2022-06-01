@@ -130,17 +130,6 @@ class SdkmanDiscoMigrationTest {
 	}
 
 	@Test
-	void testWithDistributionsAndVersionIsGreaterThanExpectedSize() {
-		this.contextRunner.withPropertyValues("foojay.distribution.version=8").run(context -> {
-			var mockServer = context.getBean(MockRestServiceServer.class);
-			var commandLineRunner = context.getBean(CommandLineRunner.class);
-			foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64, FoojayResponse.libericaLongerJavaVersion());
-			commandLineRunner.run();
-			mockServer.verify();
-		});
-	}
-
-	@Test
 	void testWithGraalVmDistributionsAndSdkmanReleaseWithNoChecksum() {
 		this.contextRunner.withPropertyValues("foojay.distribution.version=22", "foojay.java.version=17",
 				"foojay.java.distribution=liberica_native", "sdkman.liberica_native.linux[0].architecture=amd64",

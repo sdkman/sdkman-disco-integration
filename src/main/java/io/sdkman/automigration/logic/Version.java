@@ -46,8 +46,4 @@ public class Version {
 		return Optional.of(javaVersion + ".r" + packageResponse.jdkVersion());
 	}
 
-	public static boolean isValid(String version) {
-		return version.length() <= 17;
-	}
-
 }

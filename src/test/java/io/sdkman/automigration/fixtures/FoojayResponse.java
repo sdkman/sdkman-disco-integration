@@ -188,46 +188,6 @@ public class FoojayResponse {
 				""";
 	}
 
-	public static String libericaLongerJavaVersion() {
-		return """
-				{
-				   "result":[
-				      {
-				         "id":"8d2136c6472ce970f80ee4fedcc92f99",
-				         "archive_type":"tar.gz",
-				         "distribution":"liberica",
-				         "major_version":8,
-				         "java_version":"8.0.322.0.1+6",
-				         "distribution_version":"8+6",
-				         "jdk_version":8,
-				         "latest_build_available":true,
-				         "release_status":"ga",
-				         "term_of_support":"lts",
-				         "operating_system":"linux",
-				         "lib_c_type":"glibc",
-				         "architecture":"amd64",
-				         "fpu":"unknown",
-				         "package_type":"jdk",
-				         "javafx_bundled":false,
-				         "directly_downloadable":true,
-				         "filename":"bellsoft-jdk8u322+6-linux-amd64.tar.gz",
-				         "links":{
-				            "pkg_info_uri":"https://api.foojay.io/disco/v3.0/ids/8d2136c6472ce970f80ee4fedcc92f99",
-				            "pkg_download_redirect":"https://api.foojay.io/disco/v3.0/ids/8d2136c6472ce970f80ee4fedcc92f99/redirect"
-				         },
-				         "free_use_in_production":true,
-				         "tck_tested":"unknown",
-				         "tck_cert_uri":"",
-				         "aqavit_certified":"unknown",
-				         "aqavit_cert_uri":"",
-				         "size":106800593,
-				         "feature":[]
-				      }
-				   ]
-				}
-				""";
-	}
-
 	public static String idsResponseAmd64WithChecksum() {
 		return """
 				{

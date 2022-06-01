@@ -70,12 +70,7 @@ public class JavaMigration {
 		return version -> {
 			var sdkmanVendor = PackageAdapter.FOOJAY_SDKMAN_VENDOR_MAPPING.get(packageResponse.distribution());
 			var sdkmanVersionWithVendor = version + "-" + sdkmanVendor;
-			if (Version.isValid(sdkmanVersionWithVendor)) {
-				findAndPublish(packageResponse, sdkmanVendor, version, sdkmanVersionWithVendor);
-			}
-			else {
-				logger.log(Level.INFO, "Version: {0} is not valid", sdkmanVersionWithVendor);
-			}
+			findAndPublish(packageResponse, sdkmanVendor, version, sdkmanVersionWithVendor);
 		};
 	}
 
