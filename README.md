@@ -12,5 +12,6 @@ List of supported vendors:
 * IBM Semeru
 * Microsoft OpenJDK
 * Oracle
+* OpenJDK
 * SapMachine
 * Eclipse Temurin
