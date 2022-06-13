@@ -1,4 +1,4 @@
-name: Update Oracle
+name: Update OpenJDK
 
 on:
   schedule:

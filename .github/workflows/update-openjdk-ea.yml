@@ -1,4 +1,4 @@
-name: Update Oracle
+name: Update OpenJDK EA
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   run:
-    name: "Run Java Migration for OpenJDK"
+    name: "Run Java Migration for OpenJDK EA"
     strategy:
       fail-fast: false
       matrix:
