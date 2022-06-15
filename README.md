@@ -12,6 +12,7 @@ List of supported vendors:
 * BellSoft Liberica Native Image Kit
 * IBM Semeru
 * Gluon GraalVM
+* Mandrel
 * Microsoft OpenJDK
 * Oracle
 * OpenJDK
