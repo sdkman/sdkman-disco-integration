@@ -31,6 +31,7 @@ public class PackageAdapter {
             entry("sap_machine", "sapmchn"),
             entry("semeru", "sem"),
             entry("temurin", "tem"),
+            entry("trava", "trava"),
             entry("zulu", "zulu"));
 
     public static final Map<String, String> FOOJAY_SDKMAN_VENDOR_MAPPING = Stream.concat(FOOJAY_SDKMAN_GRAALVM_VENDOR_MAPPING.entrySet().stream(), FOOJAY_SDKMAN_JVM_VENDOR_MAPPING.entrySet().stream())
