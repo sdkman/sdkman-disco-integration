@@ -5,6 +5,7 @@ The source code in this repository is used by GitHub actions to find the latest 
 All versions are fetched from [Foojay´s Disco API](https://github.com/foojayio/discoapi)
 
 List of supported vendors:
+* Alibaba Dragonwell
 * Amazon Corretto
 * Azul Zulu
 * BellSoft Liberica
