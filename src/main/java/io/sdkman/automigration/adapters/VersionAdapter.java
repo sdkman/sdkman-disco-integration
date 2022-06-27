@@ -18,9 +18,10 @@ public class VersionAdapter {
     // @formatter:on
 
 	public static VersionRequest toVersionRequest(String vendor, String version, Platform platform,
-			IdsResponse idsResponse) {
+			IdsResponse idsResponse, Boolean defaultCandidate) {
 		// var checksums = checksums(idsResponse);
-		return new VersionRequest("java", vendor, version, platform, idsResponse.directDownloadUri(), null);
+		return new VersionRequest("java", vendor, version, platform, idsResponse.directDownloadUri(), null,
+				defaultCandidate);
 	}
 
 	private static Map<String, String> checksums(IdsResponse idsResponse) {

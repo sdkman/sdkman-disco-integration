@@ -27,7 +27,7 @@ class VersionAdapterTest {
 		var idsResponse = new IdsResponse(
 				"https://github.com/bell-sw/Liberica/releases/download/8u322+6/bellsoft-jdk8u322+6-linux-amd64.tar.gz",
 				"813eb415bd91e5dcb846fea4ffcf07befb254f5a", "sha1");
-		var request = VersionAdapter.toVersionRequest("librca", "8.0.322", Platform.LINUX_64, idsResponse);
+		var request = VersionAdapter.toVersionRequest("librca", "8.0.322", Platform.LINUX_64, idsResponse, null);
 		assertThat(this.json.write(request)).isStrictlyEqualToJson(SdkmanReleaseRequest.candidateAmd64WithNoChecksum());
 	}
 
@@ -36,8 +36,18 @@ class VersionAdapterTest {
 		var idsResponse = new IdsResponse(
 				"https://github.com/bell-sw/Liberica/releases/download/8u322+6/bellsoft-jdk8u322+6-linux-amd64.tar.gz",
 				null, "sha1");
-		var request = VersionAdapter.toVersionRequest("librca", "8.0.322", Platform.LINUX_64, idsResponse);
+		var request = VersionAdapter.toVersionRequest("librca", "8.0.322", Platform.LINUX_64, idsResponse, null);
 		assertThat(this.json.write(request)).isStrictlyEqualToJson(SdkmanReleaseRequest.candidateAmd64WithNoChecksum());
+	}
+
+	@Test
+	void versionRequestWithDefaultCandidate() throws IOException {
+		var idsResponse = new IdsResponse(
+				"https://github.com/bell-sw/Liberica/releases/download/8u322+6/bellsoft-jdk8u322+6-linux-amd64.tar.gz",
+				"813eb415bd91e5dcb846fea4ffcf07befb254f5a", "sha1");
+		var request = VersionAdapter.toVersionRequest("librca", "8.0.322", Platform.LINUX_64, idsResponse, true);
+		assertThat(this.json.write(request))
+				.isStrictlyEqualToJson(SdkmanReleaseRequest.defaultCandidateAmd64WithNoChecksum());
 	}
 
 }

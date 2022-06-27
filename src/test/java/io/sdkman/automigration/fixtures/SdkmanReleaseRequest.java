@@ -53,4 +53,17 @@ public class SdkmanReleaseRequest {
 				""";
 	}
 
+	public static String defaultCandidateAmd64WithNoChecksum() {
+		return """
+				{
+				    "candidate": "java",
+				    "version": "8.0.322",
+				    "vendor": "librca",
+				    "url": "https://github.com/bell-sw/Liberica/releases/download/8u322+6/bellsoft-jdk8u322+6-linux-amd64.tar.gz",
+				    "platform": "LINUX_64",
+				    "default": true
+				}
+				""";
+	}
+
 }

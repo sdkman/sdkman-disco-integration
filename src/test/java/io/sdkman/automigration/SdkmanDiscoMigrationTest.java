@@ -147,10 +147,26 @@ class SdkmanDiscoMigrationTest {
 				});
 	}
 
+	@Test
+	void shouldReleaseDefaultCandidate() {
+		this.contextRunner.withPropertyValues("foojay.distribution.version=8", "sdkman.release.consumer-key=any-key",
+				"sdkman.release.consumer-token=any-token", "sdkman.default.candidate=true").run(context -> {
+					var mockServer = context.getBean(MockRestServiceServer.class);
+					var commandLineRunner = context.getBean(CommandLineRunner.class);
+					foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64,
+							FoojayResponse.liberica80322amd64());
+					sdkmanBrokerMockServer(mockServer, "8.0.322-librca", HttpStatus.NOT_FOUND, LINUX_64);
+					foojayIdsMockServer(mockServer, FoojayResponse.idsResponseWithNoChecksum());
+					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.defaultCandidateAmd64WithNoChecksum());
+					commandLineRunner.run();
+					mockServer.verify();
+				});
+	}
+
 	private void sdkmanReleaseMockServer(MockRestServiceServer mockServer, String request) {
 		// @formatter:off
 		mockServer.expect(ExpectedCount.once(), requestTo("http://localhost/release"))
-				.andExpect(content().json(request))
+				.andExpect(content().json(request, true))
 				.andExpect(header("Consumer-Key", "any-key"))
 				.andExpect(header("Consumer-Token", "any-token"))
 				.andExpect(header("Accept", "application/json"))

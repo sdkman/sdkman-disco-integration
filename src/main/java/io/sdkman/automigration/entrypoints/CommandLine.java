@@ -34,29 +34,30 @@ public class CommandLine {
 			var releaseStatus = this.environment.getRequiredProperty("foojay.java.release-status", String.class);
 			var javafxBundled = this.environment.getProperty("foojay.java.javafx-bundled", Boolean.class, false);
 			var javaVersion = this.environment.getProperty("foojay.java.version", String.class);
+			var defaultCandidate = this.environment.getProperty("sdkman.default.candidate", Boolean.class);
 
 			var vendorProperties = Binder.get(this.environment)
 					.bind(ConfigurationPropertyName.of("sdkman").append(distribution.replace("_", "-")),
 							Bindable.of(VendorProperties.class))
 					.orElse(null);
 
-			process(vendorProperties.linux(), distribution, version, javaVersion, releaseStatus, "linux",
-					javafxBundled);
-			process(vendorProperties.macos(), distribution, version, javaVersion, releaseStatus, "macos",
-					javafxBundled);
+			process(vendorProperties.linux(), distribution, version, javaVersion, releaseStatus, "linux", javafxBundled,
+					defaultCandidate);
+			process(vendorProperties.macos(), distribution, version, javaVersion, releaseStatus, "macos", javafxBundled,
+					defaultCandidate);
 			process(vendorProperties.windows(), distribution, version, javaVersion, releaseStatus, "windows",
-					javafxBundled);
+					javafxBundled, defaultCandidate);
 		};
 	}
 
 	void process(List<VendorProperties.OS> os, String distribution, String version, String javaVersion,
-			String releaseStatus, String operatingSystem, boolean javafxBundled) {
+			String releaseStatus, String operatingSystem, boolean javafxBundled, Boolean defaultCandidate) {
 		if (os != null) {
 			os.stream().map(vendorProperties -> {
 				var foojayQueryParams = new FoojayQueryParams(distribution, version, javaVersion, releaseStatus,
 						operatingSystem, javafxBundled, vendorProperties);
 				return PackageAdapter.toQueryParams(foojayQueryParams);
-			}).forEach(this.javaMigration::execute);
+			}).forEach(queryParams -> this.javaMigration.execute(queryParams, defaultCandidate));
 		}
 	}
 

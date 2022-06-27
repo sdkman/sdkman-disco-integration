@@ -46,7 +46,7 @@ public class JavaMigration {
 		this.sdkmanProperties = sdkmanProperties;
 	}
 
-	public void execute(Map<String, List<String>> queryParams) {
+	public void execute(Map<String, List<String>> queryParams, Boolean defaultCandidate) {
 		var foojayQueryParams = Stream
 				.concat(queryParams.entrySet().stream(), FoojayClient.defaultQueryParams.entrySet().stream())
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -61,44 +61,43 @@ public class JavaMigration {
 				.max(Comparator.comparing(PackageResponse::javaVersion))
 				.ifPresent(packageResponse -> {
 					var sdkmanVersion = Version.format(packageResponse);
-					sdkmanVersion.ifPresent(processVersion(packageResponse));
+					sdkmanVersion.ifPresent(processVersion(packageResponse, defaultCandidate));
 				});
 		// @formatter:on
 	}
 
-	private Consumer<String> processVersion(PackageResponse packageResponse) {
+	private Consumer<String> processVersion(PackageResponse packageResponse, Boolean defaultCandidate) {
 		return version -> {
 			var sdkmanVendor = PackageAdapter.FOOJAY_SDKMAN_VENDOR_MAPPING.get(packageResponse.distribution());
-			var sdkmanVersionWithVendor = version + "-" + sdkmanVendor;
-			findAndPublish(packageResponse, sdkmanVendor, version, sdkmanVersionWithVendor);
+			var sdkmanVersionWithVendor = "%s-%s".formatted(version, sdkmanVendor);
+			findAndPublish(packageResponse, sdkmanVendor, version, sdkmanVersionWithVendor, defaultCandidate);
 		};
 	}
 
 	private void findAndPublish(PackageResponse packageResponse, String sdkmanVendor, String version,
-			String sdkmanVersionWithVendor) {
+			String sdkmanVersionWithVendor, Boolean defaultCandidate) {
 		logger.log(Level.INFO, "Processing {0}", sdkmanVersionWithVendor);
 		var sdkmanBrokerPlatform = Broker.platform(packageResponse.operatingSystem(), packageResponse.architecture());
 		var sdkmanReleasePlatform = Release.platform(packageResponse.operatingSystem(), packageResponse.architecture());
 
 		boolean sdkmanVersionExists = this.sdkmanClient.findVersion(this.sdkmanProperties.broker().url(),
 				sdkmanVersionWithVendor, sdkmanBrokerPlatform);
-		if (!sdkmanVersionExists) {
-			var ephemeralResponse = this.foojayClient.queryUrl(packageResponse.links().pkgInfoUri());
-			ephemeralResponse.filter(payload -> payload.result() != null && payload.result().size() == 1)
-					.map(ResultIdsResponse::result).flatMap(idsResponses -> idsResponses.stream().findFirst())
-					.ifPresent(idsResponse -> {
-						var versionRequest = VersionAdapter.toVersionRequest(sdkmanVendor, version,
-								sdkmanReleasePlatform, idsResponse);
-						logger.log(Level.INFO, versionRequest.toString());
-						var newVersionResponse = this.sdkmanClient.newVersion(this.sdkmanProperties.release().url(),
-								versionRequest);
-						newVersionResponse.ifPresent(response -> logger.log(Level.INFO, response));
-					});
-		}
-		else {
+		if (sdkmanVersionExists) {
 			logger.log(Level.INFO, "Version: {0} already exists for platform {1}",
 					new Object[] { sdkmanVersionWithVendor, sdkmanBrokerPlatform });
+			return;
 		}
+		var ephemeralResponse = this.foojayClient.queryUrl(packageResponse.links().pkgInfoUri());
+		ephemeralResponse.filter(payload -> payload.result() != null && payload.result().size() == 1)
+				.map(ResultIdsResponse::result).flatMap(idsResponses -> idsResponses.stream().findFirst())
+				.ifPresent(idsResponse -> {
+					var versionRequest = VersionAdapter.toVersionRequest(sdkmanVendor, version, sdkmanReleasePlatform,
+							idsResponse, defaultCandidate);
+					logger.log(Level.INFO, versionRequest.toString());
+					var newVersionResponse = this.sdkmanClient.newVersion(this.sdkmanProperties.release().url(),
+							versionRequest);
+					newVersionResponse.ifPresent(response -> logger.log(Level.INFO, response));
+				});
 	}
 
 }

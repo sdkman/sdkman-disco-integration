@@ -28,7 +28,7 @@ public class Version {
 
 	private static Optional<String> javaFxVersion(String javaVersion, PackageResponse packageResponse) {
 		if (packageResponse.javafxBundled()) {
-			var javaVersionWithFxSuffix = javaVersion + ".fx";
+			var javaVersionWithFxSuffix = "%s.fx".formatted(javaVersion);
 			return Optional.of(javaVersionWithFxSuffix);
 		}
 		return Optional.of(javaVersion);
@@ -43,7 +43,8 @@ public class Version {
 	}
 
 	private static Optional<String> graalVmVersion(String javaVersion, PackageResponse packageResponse) {
-		return Optional.of(javaVersion + ".r" + packageResponse.jdkVersion());
+
+		return Optional.of("%s.r%s".formatted(javaVersion, packageResponse.jdkVersion()));
 	}
 
 }
