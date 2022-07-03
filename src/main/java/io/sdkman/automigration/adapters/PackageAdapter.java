@@ -39,10 +39,12 @@ public class PackageAdapter {
     // @formatter:on
 
 	public static Map<String, List<String>> toQueryParams(FoojayQueryParams foojayQueryParams) {
-		Map<String, List<String>> graalVmQueryParams = addQueryParamsIfGraalVm(foojayQueryParams.distribution(),
+		var graalVmQueryParams = addQueryParamsIfGraalVm(foojayQueryParams.distribution(),
 				foojayQueryParams.javaVersion());
+
+		var arm32QueryParams = addQueryParamsIfARM(foojayQueryParams);
 		// @formatter:off
-        Map<String, List<String>> defaultQueryParams = Map.of("version", List.of(foojayQueryParams.version()),
+        var defaultQueryParams = Map.of("version", List.of(foojayQueryParams.version()),
                 "release_status", List.of(foojayQueryParams.releaseStatus()),
                 "operating_system", List.of(foojayQueryParams.os()),
                 "architecture", List.of(foojayQueryParams.vendorOsProperties().architecture()),
@@ -51,13 +53,24 @@ public class PackageAdapter {
                 "javafx_bundled", List.of(String.valueOf(foojayQueryParams.javafxBundled())));
         // @formatter:on
 
-		return Stream.concat(defaultQueryParams.entrySet().stream(), graalVmQueryParams.entrySet().stream())
+		return Stream
+				.concat(Stream.concat(defaultQueryParams.entrySet().stream(), graalVmQueryParams.entrySet().stream()),
+						arm32QueryParams.entrySet().stream())
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
 	private static Map<String, List<String>> addQueryParamsIfGraalVm(String distribution, String javaVersion) {
 		if (FOOJAY_SDKMAN_GRAALVM_VENDOR_MAPPING.containsKey(distribution)) {
 			return Map.of("jdk_version", List.of(javaVersion));
+		}
+		return Collections.emptyMap();
+	}
+
+	private static Map<String, List<String>> addQueryParamsIfARM(FoojayQueryParams foojayQueryParams) {
+		if (("liberica".equals(foojayQueryParams.distribution()) || "zulu".equals(foojayQueryParams.distribution()))
+				&& "linux".equals(foojayQueryParams.os())
+				&& "arm".equals(foojayQueryParams.vendorOsProperties().architecture())) {
+			return Collections.singletonMap("fpu", List.of("hard_float"));
 		}
 		return Collections.emptyMap();
 	}

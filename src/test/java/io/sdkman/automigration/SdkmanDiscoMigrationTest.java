@@ -190,7 +190,6 @@ class SdkmanDiscoMigrationTest {
 			String architecture) {
 		// @formatter:off
 		return Map.ofEntries(entry("distribution", List.of("liberica")),
-				entry("bitness", List.of("64")),
 				entry("javafx_bundled", List.of("false")),
 				entry("directly_downloadable", List.of("true")),
 				entry("libc_type", List.of("glibc", "c_std_lib", "libc")),
@@ -209,7 +208,6 @@ class SdkmanDiscoMigrationTest {
 		// @formatter:off
 		return Map.ofEntries(entry("distribution", List.of("liberica_native")),
 				entry("jdk_version", List.of("17")),
-				entry("bitness", List.of("64")),
 				entry("javafx_bundled", List.of("false")),
 				entry("directly_downloadable", List.of("true")),
 				entry("libc_type", List.of("glibc", "c_std_lib", "libc")),
