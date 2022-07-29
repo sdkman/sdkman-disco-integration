@@ -1,0 +1,29 @@
+name: Update Mandrel
+
+on:
+  schedule:
+    - cron: 0 5 * * 1-5
+  workflow_dispatch:
+
+jobs:
+  run:
+    name: "Run Java Migration for Mandrel"
+    strategy:
+      fail-fast: false
+      matrix:
+        distribution-version: [ 21, 22 ]
+        java-version: [ 11, 17 ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Java 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'maven'
+      - name: Run Mandrel
+        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--foojay.java.distribution=mandrel --foojay.distribution.version=${{ matrix.distribution-version }} --foojay.java.version=${{ matrix.java-version }} --foojay.java.release-status=ga"
+        env:
+          SDKMAN_RELEASE_CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
+          SDKMAN_RELEASE_CONSUMER_TOKEN: ${{ secrets.CONSUMER_TOKEN }}
