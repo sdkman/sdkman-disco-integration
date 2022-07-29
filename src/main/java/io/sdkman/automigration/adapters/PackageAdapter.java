@@ -15,15 +15,15 @@ public class PackageAdapter {
 	// @formatter:off
     private static final Map<String, String> FOOJAY_SDKMAN_GRAALVM_VENDOR_MAPPING = Map.ofEntries(
             entry("gluon_graalvm", "gln"),
-            entry("graalvm_ce8", "grl"),
-            entry("graalvm_ce11", "grl"),
-            entry("graalvm_ce17", "grl"),
             entry("liberica_native", "nik"),
             entry("mandrel", "mandrel"));
 
     private static final Map<String, String> FOOJAY_SDKMAN_JVM_VENDOR_MAPPING = Map.ofEntries(
             entry("corretto", "amzn"),
             entry("dragonwell", "albba"),
+			entry("graalvm_ce8", "grl"),
+			entry("graalvm_ce11", "grl"),
+			entry("graalvm_ce17", "grl"),
             entry("liberica", "librca"),
             entry("microsoft", "ms"),
             entry("oracle", "oracle"),
