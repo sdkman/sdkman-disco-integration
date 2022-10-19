@@ -16,11 +16,11 @@ public class Version {
 		if (matcher.find()) {
 			var javaVersion = matcher.group();
 			return switch (packageResponse.distribution()) {
-			case "liberica", "zulu" -> javaFxVersion(javaVersion, packageResponse);
-			case "oracle_open_jdk" -> openjdkVersion(javaVersion, packageResponse);
-			case "gluon_graalvm", "graalvm_ce8", "graalvm_ce11", "graalvm_ce17", "liberica_native", "mandrel" -> graalVmVersion(
-					javaVersion, packageResponse);
-			default -> Optional.of(javaVersion);
+				case "liberica", "zulu" -> javaFxVersion(javaVersion, packageResponse);
+				case "oracle_open_jdk" -> openjdkVersion(javaVersion, packageResponse);
+				case "gluon_graalvm", "graalvm_ce8", "graalvm_ce11", "graalvm_ce17", "liberica_native", "mandrel" ->
+					graalVmVersion(javaVersion, packageResponse);
+				default -> Optional.of(javaVersion);
 			};
 		}
 		return Optional.empty();
