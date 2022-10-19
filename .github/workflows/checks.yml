@@ -22,4 +22,4 @@ jobs:
           java-version: 17
           cache: 'maven'
       - name: Run Test
-        run: ./mvnw test
+        run: ./mvnw verify
