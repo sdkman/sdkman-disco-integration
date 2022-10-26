@@ -11,8 +11,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java-distribution: [ graalvm_ce11, graalvm_ce17]
-        distribution-version: [ 21, 22 ]
+        java-distribution: [ graalvm_ce11, graalvm_ce17, graalvm_ce19]
+        distribution-version: [ 22 ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

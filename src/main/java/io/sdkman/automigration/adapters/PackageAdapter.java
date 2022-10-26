@@ -24,6 +24,7 @@ public class PackageAdapter {
 			entry("graalvm_ce8", "grl"),
 			entry("graalvm_ce11", "grl"),
 			entry("graalvm_ce17", "grl"),
+			entry("graalvm_ce19", "grl"),
             entry("liberica", "librca"),
             entry("microsoft", "ms"),
             entry("oracle", "oracle"),
