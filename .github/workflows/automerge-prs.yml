@@ -1,0 +1,80 @@
+name: Automerge PRs
+
+on:
+  schedule:
+    - cron: 0 13 * * 1-5
+  workflow_dispatch:
+
+jobs:
+  find_prs:
+    runs-on: ubuntu-latest
+    outputs:
+        matrix: ${{ steps.set-matrix.outputs.matrix }}
+        prs: ${{ steps.set-matrix.outputs.prs }}
+    steps:
+      - name: Install github/gh-projects extension
+        run: gh extension install github/gh-projects
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - id: set-matrix
+        shell: sh
+        run: |
+          today=$(date +"%Y-%m-%d")
+
+          echo $today
+
+          echo 'Fetch all PRs'
+          prs=$(gh projects item-list $PROJECT_ID --org $ORG_ID --format json | jq '[.items[] | select(.status != "Done" and ."release date" != null and .content.type == "PullRequest" and ."release date" == "'"$today"'")]' -c)
+
+          echo $prs
+          numberOfElements=$(echo $prs | jq '. | length')
+
+          if [ $numberOfElements -eq 0 ]; then
+            echo "No PRs to check" >> $GITHUB_STEP_SUMMARY
+          else
+            echo 'List PR numbers'
+            prNumbers=$(echo $prs | jq '[.[].content.number]' -c)
+
+            echo $prNumbers
+
+            echo "prs=$prs" >> $GITHUB_OUTPUT
+            echo "matrix={\"prNumbers\":$prNumbers}" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_PAT }}
+          PROJECT_ID: 1
+          ORG_ID: sdkman
+  automerge_pr:
+    needs: [find_prs]
+    if: ${{ needs.find_prs.outputs.matrix != '' && toJSON(fromJSON(needs.find_prs.outputs.matrix)) != '[]' }}
+    strategy:
+      matrix: ${{ fromJson(needs.find_prs.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: main
+      - name: Merge PR
+        run: |
+          pr=$(echo '${{ needs.find_prs.outputs.prs }}' | jq 'select(.[] | select(.content.number == ${{ matrix.prNumbers }}))' -c)
+
+          prTitle=$(echo $pr | jq '.[].content.title')
+          prNumber=$(echo $pr | jq '.[].content.number')
+
+          prDetail=$(gh pr view $prNumber --json files,headRefName,url)
+          branch=$(echo $prDetail | jq '.headRefName')
+          url=$(echo $prDetail | jq '.url')
+          files=$(echo $prDetail | jq '.files[].path')
+
+          echo "PR $prNumber - $prTitle is going to be merged."
+          gh pr merge $prNumber --squash --repo $GITHUB_REPOSITORY
+
+          echo "### :rocket: PR $prNumber - $prTitle merged." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "* Branch: $branch" >> $GITHUB_STEP_SUMMARY
+          echo "* PR URL: $url" >> $GITHUB_STEP_SUMMARY
+          echo "* Files:" >> $GITHUB_STEP_SUMMARY
+          echo "  $files" >> $GITHUB_STEP_SUMMARY
+        env:
+            GH_TOKEN: ${{ secrets.PROJECT_PAT }}
