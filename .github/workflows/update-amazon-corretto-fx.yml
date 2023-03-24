@@ -1,4 +1,4 @@
-name: Update Amazon Corretto
+name: Update Amazon Corretto 8
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   run:
-    name: "Run Java Migration for Amazon Corretto"
+    name: "Run Java Migration for Amazon Corretto 8"
     strategy:
       fail-fast: false
       matrix:
