@@ -19,4 +19,4 @@ jobs:
         uses: sdkman/sdkman-action@v1
         id: sdkman
       - name: Run Test
-        run: ./mvnw verify
+        run: ./mvnw -V -ntp verify
