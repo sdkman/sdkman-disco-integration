@@ -15,11 +15,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Set up Java 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: 17
-          cache: 'maven'
+      - name: Setup SDKMAN!
+        uses: sdkman/sdkman-action@v1
+        id: sdkman
       - name: Run Test
         run: ./mvnw verify
