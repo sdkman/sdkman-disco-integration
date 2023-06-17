@@ -20,3 +20,4 @@ List of supported vendors:
 * SapMachine
 * Eclipse Temurin
 * Trava OpenJDK
+* JetBrains Runtime
