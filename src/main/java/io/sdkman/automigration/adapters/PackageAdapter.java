@@ -14,13 +14,13 @@ public class PackageAdapter {
 
 	// @formatter:off
     private static final Map<String, String> FOOJAY_SDKMAN_GRAALVM_VENDOR_MAPPING = Map.ofEntries(
-            entry("gluon_graalvm", "gln"),
-            entry("liberica_native", "nik"),
-            entry("mandrel", "mandrel"));
+			entry("gluon_graalvm", "gln"),
+			entry("liberica_native", "nik"),
+			entry("mandrel", "mandrel"));
 
     private static final Map<String, String> FOOJAY_SDKMAN_JVM_VENDOR_MAPPING = Map.ofEntries(
-            entry("corretto", "amzn"),
-            entry("dragonwell", "albba"),
+			entry("corretto", "amzn"),
+			entry("dragonwell", "albba"),
 			entry("graalvm_community", "graalce"),
 			entry("graalvm", "graal"),
 			entry("graalvm_ce8", "grl"),
@@ -28,16 +28,16 @@ public class PackageAdapter {
 			entry("graalvm_ce17", "grl"),
 			entry("graalvm_ce19", "grl"),
 			entry("jetbrains", "jbr"),
-            entry("kona", "kona"),
-            entry("liberica", "librca"),
-            entry("microsoft", "ms"),
-            entry("oracle", "oracle"),
-            entry("oracle_open_jdk", "open"),
-            entry("sap_machine", "sapmchn"),
-            entry("semeru", "sem"),
-            entry("temurin", "tem"),
-            entry("trava", "trava"),
-            entry("zulu", "zulu"));
+			entry("kona", "kona"),
+			entry("liberica", "librca"),
+			entry("microsoft", "ms"),
+			entry("oracle", "oracle"),
+			entry("oracle_open_jdk", "open"),
+			entry("sap_machine", "sapmchn"),
+			entry("semeru", "sem"),
+			entry("temurin", "tem"),
+			entry("trava", "trava"),
+			entry("zulu", "zulu"));
 
     public static final Map<String, String> FOOJAY_SDKMAN_VENDOR_MAPPING = Stream.concat(FOOJAY_SDKMAN_GRAALVM_VENDOR_MAPPING.entrySet().stream(), FOOJAY_SDKMAN_JVM_VENDOR_MAPPING.entrySet().stream())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
