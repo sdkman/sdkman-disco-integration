@@ -1,4 +1,4 @@
-name: Update GraalVM
+name: Update GraalVM CE
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   run:
-    name: "Run Java Migration for GraalVM"
+    name: "Run Java Migration for GraalVM CE"
     strategy:
       fail-fast: false
       matrix:
@@ -22,7 +22,7 @@ jobs:
           java-version: 17
           cache: 'maven'
       - name: Run graalvm
-        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--foojay.java.distribution=graalvm --foojay.distribution.version=${{ matrix.java-version }} --foojay.java.release-status=ga"
+        run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--foojay.java.distribution=graalvm_community --foojay.distribution.version=${{ matrix.java-version }} --foojay.java.release-status=ga"
         env:
           SDKMAN_RELEASE_CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
           SDKMAN_RELEASE_CONSUMER_TOKEN: ${{ secrets.CONSUMER_TOKEN }}

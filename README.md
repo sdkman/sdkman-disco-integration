@@ -19,5 +19,6 @@ List of supported vendors:
 * OpenJDK
 * SapMachine
 * Eclipse Temurin
+* Tencent Kona
 * Trava OpenJDK
 * JetBrains Runtime
