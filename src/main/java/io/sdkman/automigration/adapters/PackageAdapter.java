@@ -1,6 +1,7 @@
 package io.sdkman.automigration.adapters;
 
 import io.sdkman.automigration.models.FoojayQueryParams;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +56,8 @@ public class PackageAdapter {
                 "architecture", List.of(foojayQueryParams.vendorOsProperties().architecture()),
                 "archive_type", List.of(foojayQueryParams.vendorOsProperties().archiveType()),
                 "distribution", List.of(foojayQueryParams.distribution()),
-                "javafx_bundled", List.of(String.valueOf(foojayQueryParams.javafxBundled())));
+                "javafx_bundled", List.of(String.valueOf(foojayQueryParams.javafxBundled())),
+				"feature", List.of(StringUtils.commaDelimitedListToStringArray(foojayQueryParams.features())));
         // @formatter:on
 
 		return Stream

@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.source.ConfigurationPropertyN
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -35,27 +36,37 @@ public class CommandLine {
 			var javafxBundled = this.environment.getProperty("foojay.java.javafx-bundled", Boolean.class, false);
 			var javaVersion = this.environment.getProperty("foojay.java.version", String.class);
 			var defaultCandidate = this.environment.getProperty("sdkman.default.candidate", Boolean.class);
+			var features = this.environment.getProperty("foojay.java.features", String.class);
 
+			var distributionConfigurationPropertyName = resolveConfigurationPropertyName(distribution, features);
 			var vendorProperties = Binder.get(this.environment)
-					.bind(ConfigurationPropertyName.of("sdkman").append(distribution.replace("_", "-")),
-							Bindable.of(VendorProperties.class))
-					.orElse(null);
+					.bind(distributionConfigurationPropertyName, Bindable.of(VendorProperties.class)).orElse(null);
 
 			process(vendorProperties.linux(), distribution, version, javaVersion, releaseStatus, "linux", javafxBundled,
-					defaultCandidate);
+					defaultCandidate, features);
 			process(vendorProperties.macos(), distribution, version, javaVersion, releaseStatus, "macos", javafxBundled,
-					defaultCandidate);
+					defaultCandidate, features);
 			process(vendorProperties.windows(), distribution, version, javaVersion, releaseStatus, "windows",
-					javafxBundled, defaultCandidate);
+					javafxBundled, defaultCandidate, features);
 		};
 	}
 
+	private static ConfigurationPropertyName resolveConfigurationPropertyName(String distribution, String features) {
+		var distributionConfigurationPropertyName = ConfigurationPropertyName.of("sdkman")
+				.append(distribution.replace("_", "-"));
+		if (StringUtils.hasText(features)) {
+			return distributionConfigurationPropertyName.append(features);
+		}
+		return distributionConfigurationPropertyName;
+	}
+
 	void process(List<VendorProperties.OS> os, String distribution, String version, String javaVersion,
-			String releaseStatus, String operatingSystem, boolean javafxBundled, Boolean defaultCandidate) {
+			String releaseStatus, String operatingSystem, boolean javafxBundled, Boolean defaultCandidate,
+			String features) {
 		if (os != null) {
 			os.stream().map(vendorProperties -> {
 				var foojayQueryParams = new FoojayQueryParams(distribution, version, javaVersion, releaseStatus,
-						operatingSystem, javafxBundled, vendorProperties);
+						operatingSystem, javafxBundled, features, vendorProperties);
 				return PackageAdapter.toQueryParams(foojayQueryParams);
 			}).forEach(queryParams -> this.javaMigration.execute(queryParams, defaultCandidate));
 		}

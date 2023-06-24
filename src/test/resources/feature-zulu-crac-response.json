@@ -1,0 +1,42 @@
+{
+  "result": [
+    {
+      "id": "69d3997c1a800dbd573edb923b57376e",
+      "archive_type": "tar.gz",
+      "distribution": "zulu",
+      "major_version": 17,
+      "java_version": "17.0.7+7",
+      "distribution_version": "17.42.19",
+      "jdk_version": 17,
+      "latest_build_available": true,
+      "release_status": "ga",
+      "term_of_support": "lts",
+      "operating_system": "linux",
+      "lib_c_type": "glibc",
+      "architecture": "x64",
+      "fpu": "unknown",
+      "package_type": "jdk",
+      "javafx_bundled": false,
+      "directly_downloadable": true,
+      "filename": "zulu17.42.19-ca-crac-jdk17.0.7-linux_x64.tar.gz",
+      "links": {
+        "pkg_info_uri": "https://api.foojay.io/disco/v3.0/ids/8d2136c6472ce970f80ee4fedcc92f99",
+        "pkg_download_redirect": "https://api.foojay.io/disco/v3.0/ids/8d2136c6472ce970f80ee4fedcc92f99/redirect"
+      },
+      "free_use_in_production": true,
+      "tck_tested": "yes",
+      "tck_cert_uri": "https://cdn.azul.com/zulu/pdf/cert.zulu17.42.19-ca-crac-jdk17.0.7-linux_x64.tar.gz.pdf",
+      "aqavit_certified": "unknown",
+      "aqavit_cert_uri": "",
+      "size": 202666165,
+      "feature": [
+        {
+          "name": "CRAC",
+          "ui_string": "CRaC",
+          "api_string": "crac"
+        }
+      ]
+    }
+  ],
+  "message": "1 package(s) found"
+}

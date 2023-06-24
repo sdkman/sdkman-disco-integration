@@ -14,6 +14,8 @@ import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -63,13 +65,13 @@ class SdkmanDiscoMigrationTest {
 				"sdkman.liberica.linux[1].archive-type=tar.gz").run(context -> {
 					var mockServer = context.getBean(MockRestServiceServer.class);
 					var commandLineRunner = context.getBean(CommandLineRunner.class);
-					foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64,
+					foojayPackagesMockServer(mockServer, "liberica", "8", TAR_GZ, LINUX, AMD64,
 							FoojayResponse.liberica80322amd64());
 					sdkmanBrokerMockServer(mockServer, "8.0.322-librca", HttpStatus.NOT_FOUND, LINUX_64);
 					foojayIdsMockServer(mockServer, FoojayResponse.idsResponseAmd64WithChecksum());
 					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.candidateAmd64WithNoChecksum());
 
-					foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, ARM_64,
+					foojayPackagesMockServer(mockServer, "liberica", "8", TAR_GZ, LINUX, ARM_64,
 							FoojayResponse.liberica80322arm64());
 					sdkmanBrokerMockServer(mockServer, "8.0.322-librca", HttpStatus.NOT_FOUND, LINUX_ARM64);
 					foojayIdsMockServer(mockServer, FoojayResponse.idsResponseArm64WithChecksum());
@@ -85,7 +87,7 @@ class SdkmanDiscoMigrationTest {
 				"sdkman.release.consumer-token=any-token").run(context -> {
 					var mockServer = context.getBean(MockRestServiceServer.class);
 					var commandLineRunner = context.getBean(CommandLineRunner.class);
-					foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64,
+					foojayPackagesMockServer(mockServer, "liberica", "8", TAR_GZ, LINUX, AMD64,
 							FoojayResponse.liberica80322amd64());
 					sdkmanBrokerMockServer(mockServer, "8.0.322-librca", HttpStatus.NOT_FOUND, LINUX_64);
 					foojayIdsMockServer(mockServer, FoojayResponse.idsResponseWithNoChecksum());
@@ -100,7 +102,7 @@ class SdkmanDiscoMigrationTest {
 		this.contextRunner.run(context -> {
 			var mockServer = context.getBean(MockRestServiceServer.class);
 			var commandLineRunner = context.getBean(CommandLineRunner.class);
-			foojayPackagesMockServer(mockServer, "18", TAR_GZ, LINUX, AMD64, FoojayResponse.empty());
+			foojayPackagesMockServer(mockServer, "liberica", "18", TAR_GZ, LINUX, AMD64, FoojayResponse.empty());
 			commandLineRunner.run();
 			mockServer.verify();
 		});
@@ -111,7 +113,8 @@ class SdkmanDiscoMigrationTest {
 		this.contextRunner.withPropertyValues("foojay.distribution.version=8").run(context -> {
 			var mockServer = context.getBean(MockRestServiceServer.class);
 			var commandLineRunner = context.getBean(CommandLineRunner.class);
-			foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64, FoojayResponse.liberica80322amd64());
+			foojayPackagesMockServer(mockServer, "liberica", "8", TAR_GZ, LINUX, AMD64,
+					FoojayResponse.liberica80322amd64());
 			sdkmanBrokerMockServer(mockServer, "8.0.322-librca", HttpStatus.FOUND, LINUX_64);
 			commandLineRunner.run();
 			mockServer.verify();
@@ -123,7 +126,7 @@ class SdkmanDiscoMigrationTest {
 		this.contextRunner.withPropertyValues("foojay.distribution.version=8").run(context -> {
 			var mockServer = context.getBean(MockRestServiceServer.class);
 			var commandLineRunner = context.getBean(CommandLineRunner.class);
-			foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64, FoojayResponse.liberica8());
+			foojayPackagesMockServer(mockServer, "liberica", "8", TAR_GZ, LINUX, AMD64, FoojayResponse.liberica8());
 			commandLineRunner.run();
 			mockServer.verify();
 		});
@@ -137,7 +140,7 @@ class SdkmanDiscoMigrationTest {
 				"sdkman.release.consumer-token=any-token").run(context -> {
 					var mockServer = context.getBean(MockRestServiceServer.class);
 					var commandLineRunner = context.getBean(CommandLineRunner.class);
-					foojayPackagesMockServer(mockServer, "22", TAR_GZ, LINUX, AMD64,
+					foojayPackagesMockServer(mockServer, "liberica", "22", TAR_GZ, LINUX, AMD64,
 							FoojayResponse.libericaNik80322amd64());
 					sdkmanBrokerMockServer(mockServer, "22.1.r17-nik", HttpStatus.NOT_FOUND, LINUX_64);
 					foojayIdsMockServer(mockServer, FoojayResponse.libericaNikIdsResponseWithNoChecksum());
@@ -153,11 +156,29 @@ class SdkmanDiscoMigrationTest {
 				"sdkman.release.consumer-token=any-token", "sdkman.default.candidate=true").run(context -> {
 					var mockServer = context.getBean(MockRestServiceServer.class);
 					var commandLineRunner = context.getBean(CommandLineRunner.class);
-					foojayPackagesMockServer(mockServer, "8", TAR_GZ, LINUX, AMD64,
+					foojayPackagesMockServer(mockServer, "liberica", "8", TAR_GZ, LINUX, AMD64,
 							FoojayResponse.liberica80322amd64());
 					sdkmanBrokerMockServer(mockServer, "8.0.322-librca", HttpStatus.NOT_FOUND, LINUX_64);
 					foojayIdsMockServer(mockServer, FoojayResponse.idsResponseWithNoChecksum());
 					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.defaultCandidateAmd64WithNoChecksum());
+					commandLineRunner.run();
+					mockServer.verify();
+				});
+	}
+
+	@Test
+	void shouldReturnCandidateWhenFeaturesIsUsed() {
+		this.contextRunner.withPropertyValues("foojay.distribution.version=17", "sdkman.release.consumer-key=any-key",
+				"sdkman.release.consumer-token=any-token", "foojay.java.distribution=zulu", "foojay.java.features=crac",
+				"sdkman.zulu.crac.linux[0].architecture=amd64", "sdkman.zulu.crac.linux[0].archive-type=tar.gz")
+				.run(context -> {
+					var mockServer = context.getBean(MockRestServiceServer.class);
+					var commandLineRunner = context.getBean(CommandLineRunner.class);
+					foojayPackagesMockServer(mockServer, "zulu", "17", TAR_GZ, LINUX, AMD64,
+							Files.readString(Path.of("src/test/resources/feature-zulu-crac-response.json")));
+					sdkmanBrokerMockServer(mockServer, "17.0.7.crac-zulu", HttpStatus.NOT_FOUND, LINUX_64);
+					foojayIdsMockServer(mockServer, FoojayResponse.zuluCracIdsResponse());
+					sdkmanReleaseMockServer(mockServer, SdkmanReleaseRequest.zuluCracCandidate());
 					commandLineRunner.run();
 					mockServer.verify();
 				});
@@ -188,13 +209,13 @@ class SdkmanDiscoMigrationTest {
 				.andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response));
 	}
 
-	private void foojayPackagesMockServer(MockRestServiceServer mockServer, String version, String archiveType,
-			String os, String architecture, String response) {
+	private void foojayPackagesMockServer(MockRestServiceServer mockServer, String distribution, String version,
+			String archiveType, String os, String architecture, String response) {
 		mockServer.expect(ExpectedCount.once(), request -> {
 			var uriComponents = UriComponentsBuilder.fromUri(request.getURI()).build();
 			var expectedQueryParams = uriComponents.getQueryParams().containsKey("jdk_version")
 					? graalVmDistributionQueryParams(version, archiveType, os, architecture)
-					: javaDistributionQueryParams(version, archiveType, os, architecture);
+					: javaDistributionQueryParams(distribution, version, archiveType, os, architecture);
 			assertThat(uriComponents.getPath()).isEqualTo("/disco/v3.0/packages");
 			assertThat(uriComponents.getQueryParams()).containsAllEntriesOf(expectedQueryParams);
 
@@ -202,10 +223,10 @@ class SdkmanDiscoMigrationTest {
 				.andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response));
 	}
 
-	private static Map<String, List<String>> javaDistributionQueryParams(String version, String archiveType, String os,
-			String architecture) {
+	private static Map<String, List<String>> javaDistributionQueryParams(String distribution, String version,
+			String archiveType, String os, String architecture) {
 		// @formatter:off
-		return Map.ofEntries(entry("distribution", List.of("liberica")),
+		return Map.ofEntries(entry("distribution", List.of(distribution)),
 				entry("javafx_bundled", List.of("false")),
 				entry("directly_downloadable", List.of("true")),
 				entry("libc_type", List.of("glibc", "c_std_lib", "libc")),

@@ -336,4 +336,23 @@ public class FoojayResponse {
 				""";
 	}
 
+	public static String zuluCracIdsResponse() {
+		return """
+				{
+				  "result":[
+				    {
+				    "filename":"zulu17.42.19-ca-crac-jdk17.0.7-linux_x64.tar.gz",
+				    "direct_download_uri":"https://cdn.azul.com/zulu/bin/zulu17.42.21-ca-crac-jdk17.0.7-linux_x64.tar.gz",
+				    "download_site_uri":"",
+				    "signature_uri":"",
+				    "checksum_uri":"",
+				    "checksum":"",
+				    "checksum_type":"sha1"
+				  }
+				    ],
+				  "message":""
+				}
+				""";
+	}
+
 }

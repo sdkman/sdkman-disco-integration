@@ -2,6 +2,8 @@ package io.sdkman.automigration.wire.in;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 // @formatter:off
 public record PackageResponse(String distribution,
                               String architecture,
@@ -16,6 +18,7 @@ public record PackageResponse(String distribution,
                               String releaseStatus,
                               @JsonProperty("javafx_bundled")
                               boolean javafxBundled,
-                              Links links) {
+                              Links links,
+                              List<Feature> feature) {
 }
 // @formatter:on

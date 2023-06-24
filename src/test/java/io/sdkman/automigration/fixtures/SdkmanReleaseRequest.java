@@ -66,4 +66,16 @@ public class SdkmanReleaseRequest {
 				""";
 	}
 
+	public static String zuluCracCandidate() {
+		return """
+				{
+				    "candidate": "java",
+				    "version": "17.0.7.crac",
+				    "vendor": "zulu",
+				    "url": "https://cdn.azul.com/zulu/bin/zulu17.42.21-ca-crac-jdk17.0.7-linux_x64.tar.gz",
+				    "platform": "LINUX_64"
+				}
+				""";
+	}
+
 }
