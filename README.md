@@ -21,3 +21,4 @@ List of supported vendors:
 * Eclipse Temurin
 * Tencent Kona
 * Trava OpenJDK
+* JetBrains Runtime
