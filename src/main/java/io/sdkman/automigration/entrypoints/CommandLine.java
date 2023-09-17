@@ -40,7 +40,8 @@ public class CommandLine {
 
 			var distributionConfigurationPropertyName = resolveConfigurationPropertyName(distribution, features);
 			var vendorProperties = Binder.get(this.environment)
-					.bind(distributionConfigurationPropertyName, Bindable.of(VendorProperties.class)).orElse(null);
+				.bind(distributionConfigurationPropertyName, Bindable.of(VendorProperties.class))
+				.orElse(null);
 
 			process(vendorProperties.linux(), distribution, version, javaVersion, releaseStatus, "linux", javafxBundled,
 					defaultCandidate, features);
@@ -53,7 +54,7 @@ public class CommandLine {
 
 	private static ConfigurationPropertyName resolveConfigurationPropertyName(String distribution, String features) {
 		var distributionConfigurationPropertyName = ConfigurationPropertyName.of("sdkman")
-				.append(distribution.replace("_", "-"));
+			.append(distribution.replace("_", "-"));
 		if (StringUtils.hasText(features)) {
 			return distributionConfigurationPropertyName.append(features);
 		}

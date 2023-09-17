@@ -13,7 +13,8 @@ public class RestTemplateConfig {
 	@Bean
 	public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
 		return restTemplateBuilder.requestFactory(NoRedirectSimpleClientHttpRequestFactory.class)
-				.errorHandler(new ServerResponseErrorHandler()).build();
+			.errorHandler(new ServerResponseErrorHandler())
+			.build();
 	}
 
 }

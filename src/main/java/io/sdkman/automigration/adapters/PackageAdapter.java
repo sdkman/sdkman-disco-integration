@@ -61,9 +61,9 @@ public class PackageAdapter {
         // @formatter:on
 
 		return Stream
-				.concat(Stream.concat(defaultQueryParams.entrySet().stream(), graalVmQueryParams.entrySet().stream()),
-						arm32QueryParams.entrySet().stream())
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+			.concat(Stream.concat(defaultQueryParams.entrySet().stream(), graalVmQueryParams.entrySet().stream()),
+					arm32QueryParams.entrySet().stream())
+			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
 	private static Map<String, List<String>> addQueryParamsIfGraalVm(String distribution, String javaVersion) {

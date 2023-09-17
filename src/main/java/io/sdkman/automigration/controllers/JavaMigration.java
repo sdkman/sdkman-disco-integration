@@ -48,8 +48,8 @@ public class JavaMigration {
 
 	public void execute(Map<String, List<String>> queryParams, Boolean defaultCandidate) {
 		var foojayQueryParams = Stream
-				.concat(queryParams.entrySet().stream(), FoojayClient.defaultQueryParams.entrySet().stream())
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+			.concat(queryParams.entrySet().stream(), FoojayClient.defaultQueryParams.entrySet().stream())
+			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 		var resultPackageResponse = this.foojayClient.queryPackages(this.foojayProperties.url(), foojayQueryParams);
 		// @formatter:off
@@ -89,15 +89,16 @@ public class JavaMigration {
 		}
 		var ephemeralResponse = this.foojayClient.queryUrl(packageResponse.links().pkgInfoUri());
 		ephemeralResponse.filter(payload -> payload.result() != null && payload.result().size() == 1)
-				.map(ResultIdsResponse::result).flatMap(idsResponses -> idsResponses.stream().findFirst())
-				.ifPresent(idsResponse -> {
-					var versionRequest = VersionAdapter.toVersionRequest(sdkmanVendor, version, sdkmanReleasePlatform,
-							idsResponse, defaultCandidate);
-					logger.log(Level.INFO, versionRequest.toString());
-					var newVersionResponse = this.sdkmanClient.newVersion(this.sdkmanProperties.release().url(),
-							versionRequest);
-					newVersionResponse.ifPresent(response -> logger.log(Level.INFO, response));
-				});
+			.map(ResultIdsResponse::result)
+			.flatMap(idsResponses -> idsResponses.stream().findFirst())
+			.ifPresent(idsResponse -> {
+				var versionRequest = VersionAdapter.toVersionRequest(sdkmanVendor, version, sdkmanReleasePlatform,
+						idsResponse, defaultCandidate);
+				logger.log(Level.INFO, versionRequest.toString());
+				var newVersionResponse = this.sdkmanClient.newVersion(this.sdkmanProperties.release().url(),
+						versionRequest);
+				newVersionResponse.ifPresent(response -> logger.log(Level.INFO, response));
+			});
 	}
 
 }

@@ -32,7 +32,9 @@ public class FoojayClient {
 	public Optional<ResultPackageResponse> queryPackages(String url, Map<String, List<String>> queryParams) {
 		var packageUrl = url.concat("/packages");
 		var newUrl = UriComponentsBuilder.fromHttpUrl(packageUrl)
-				.queryParams(CollectionUtils.toMultiValueMap(queryParams)).encode().toUriString();
+			.queryParams(CollectionUtils.toMultiValueMap(queryParams))
+			.encode()
+			.toUriString();
 		var response = this.restTemplate.getForEntity(newUrl, ResultPackageResponse.class);
 		if (response.getStatusCode() == HttpStatus.OK && response.hasBody()) {
 			return Optional.of(response.getBody());
