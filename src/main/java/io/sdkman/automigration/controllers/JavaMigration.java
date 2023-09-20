@@ -8,8 +8,8 @@ import io.sdkman.automigration.logic.Release;
 import io.sdkman.automigration.http.FoojayClient;
 import io.sdkman.automigration.http.SdkmanClient;
 import io.sdkman.automigration.logic.Version;
-import io.sdkman.automigration.properties.FoojayConfigurationProperties;
-import io.sdkman.automigration.properties.SdkmanConfigurationProperties;
+import io.sdkman.automigration.properties.FoojayApiProperties;
+import io.sdkman.automigration.properties.SdkmanApiProperties;
 import io.sdkman.automigration.wire.in.PackageResponse;
 import io.sdkman.automigration.wire.in.ResultIdsResponse;
 import io.sdkman.automigration.wire.in.ResultPackageResponse;
@@ -34,12 +34,12 @@ public class JavaMigration {
 
 	private final SdkmanClient sdkmanClient;
 
-	private final FoojayConfigurationProperties foojayProperties;
+	private final FoojayApiProperties foojayProperties;
 
-	private final SdkmanConfigurationProperties sdkmanProperties;
+	private final SdkmanApiProperties sdkmanProperties;
 
-	public JavaMigration(FoojayClient foojayClient, SdkmanClient sdkmanClient,
-			FoojayConfigurationProperties foojayProperties, SdkmanConfigurationProperties sdkmanProperties) {
+	public JavaMigration(FoojayClient foojayClient, SdkmanClient sdkmanClient, FoojayApiProperties foojayProperties,
+			SdkmanApiProperties sdkmanProperties) {
 		this.foojayClient = foojayClient;
 		this.sdkmanClient = sdkmanClient;
 		this.foojayProperties = foojayProperties;

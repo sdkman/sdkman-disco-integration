@@ -1,13 +1,13 @@
 package io.sdkman.automigration;
 
-import io.sdkman.automigration.properties.FoojayConfigurationProperties;
-import io.sdkman.automigration.properties.SdkmanConfigurationProperties;
+import io.sdkman.automigration.properties.FoojayApiProperties;
+import io.sdkman.automigration.properties.SdkmanApiProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
-@EnableConfigurationProperties({ FoojayConfigurationProperties.class, SdkmanConfigurationProperties.class })
+@EnableConfigurationProperties({ FoojayApiProperties.class, SdkmanApiProperties.class })
 public class SdkmanDiscoMigration {
 
 	public static void main(String[] args) {

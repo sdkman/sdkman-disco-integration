@@ -44,9 +44,9 @@ class SdkmanDiscoMigrationTest {
 	// @formatter:off
     private final String[] propertyValues = {
 			"spring.test.webclient.mockrestserviceserver.enabled=true",
-            "foojay.url=http://localhost/disco/v3.0",
-            "sdkman.broker.url=http://localhost/2/broker/download/java/{version}/{platform}",
-            "sdkman.release.url=http://localhost/release",
+            "foojay-api.url=http://localhost/disco/v3.0",
+            "sdkman-api.broker.url=http://localhost/2/broker/download/java/{version}/{platform}",
+            "sdkman-api.release.url=http://localhost/release",
             "foojay.java.distribution=liberica",
 			"foojay.distribution.version=18",
 			"foojay.java.release-status=ga",
