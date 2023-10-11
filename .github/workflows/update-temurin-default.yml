@@ -1,4 +1,4 @@
-name: Update Eclipse Temurin
+name: Update Eclipse Temurin Default
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   run:
-    name: "Run Java Migration for Eclipse Temurin"
+    name: "Run Java Migration for Eclipse Temurin Default"
     strategy:
       fail-fast: false
       matrix:
