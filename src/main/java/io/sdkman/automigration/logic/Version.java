@@ -55,6 +55,9 @@ public class Version {
 		if (javaFxVersion.isPresent()) {
 			return javaFxVersion;
 		}
+		else if (!packageResponse.feature().isEmpty() && packageResponse.feature().contains(new Feature("CRAC"))) {
+			return Optional.of("%s.crac".formatted(javaVersion));
+		}
 		return Optional.of(javaVersion);
 	}
 
