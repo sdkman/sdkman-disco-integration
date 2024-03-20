@@ -19,7 +19,7 @@ public class Version {
 			return switch (packageResponse.distribution()) {
 				case "liberica" -> resolveLibericaVersion(javaVersion, packageResponse);
 				case "zulu" -> resolveZuluVersion(javaVersion, packageResponse);
-				case "oracle_open_jdk" -> openjdkVersion(javaVersion, packageResponse);
+				case "graalvm", "oracle_open_jdk" -> openjdkVersion(javaVersion, packageResponse);
 				case "gluon_graalvm", "graalvm_ce8", "graalvm_ce11", "graalvm_ce17", "graalvm_ce19", "liberica_native",
 						"mandrel" ->
 					graalVmVersion(javaVersion, packageResponse);
