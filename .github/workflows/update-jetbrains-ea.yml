@@ -1,4 +1,4 @@
-name: Update JetBrains Runtime
+name: Update JetBrains EA
 
 on:
   schedule:
