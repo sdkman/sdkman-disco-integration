@@ -46,7 +46,10 @@ public class Version {
 	}
 
 	private static Optional<String> graalVmVersion(String javaVersion, PackageResponse packageResponse) {
-
+		Optional<String> javaFxVersion = javaFxVersion(javaVersion, packageResponse);
+		if (javaFxVersion.isPresent()) {
+			return javaFxVersion;
+		}
 		return Optional.of("%s.r%s".formatted(javaVersion, packageResponse.jdkVersion()));
 	}
 
