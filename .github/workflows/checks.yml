@@ -15,11 +15,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Set up Java 21
+      - name: Set up Java 24
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: 21
+          java-version: 24
           cache: 'maven'
       - name: Run Test
         run: ./mvnw -V -ntp verify
