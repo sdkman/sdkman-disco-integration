@@ -8,8 +8,6 @@ import io.sdkman.automigration.logic.Release;
 import io.sdkman.automigration.http.FoojayClient;
 import io.sdkman.automigration.http.SdkmanClient;
 import io.sdkman.automigration.logic.Version;
-import io.sdkman.automigration.properties.FoojayApiProperties;
-import io.sdkman.automigration.properties.SdkmanApiProperties;
 import io.sdkman.automigration.wire.in.PackageResponse;
 import io.sdkman.automigration.wire.in.ResultIdsResponse;
 import io.sdkman.automigration.wire.in.ResultPackageResponse;
@@ -34,24 +32,18 @@ public class JavaMigration {
 
 	private final SdkmanClient sdkmanClient;
 
-	private final FoojayApiProperties foojayProperties;
-
-	private final SdkmanApiProperties sdkmanProperties;
-
-	public JavaMigration(FoojayClient foojayClient, SdkmanClient sdkmanClient, FoojayApiProperties foojayProperties,
-			SdkmanApiProperties sdkmanProperties) {
+	public JavaMigration(FoojayClient foojayClient, SdkmanClient sdkmanClient) {
 		this.foojayClient = foojayClient;
 		this.sdkmanClient = sdkmanClient;
-		this.foojayProperties = foojayProperties;
-		this.sdkmanProperties = sdkmanProperties;
 	}
 
 	public void execute(Map<String, List<String>> queryParams, Boolean defaultCandidate) {
 		var foojayQueryParams = Stream
 			.concat(queryParams.entrySet().stream(), FoojayClient.defaultQueryParams.entrySet().stream())
+			.filter(e -> e.getValue() != null && !e.getValue().isEmpty())
 			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-		var resultPackageResponse = this.foojayClient.queryPackages(this.foojayProperties.url(), foojayQueryParams);
+		var resultPackageResponse = this.foojayClient.queryPackages(foojayQueryParams);
 		// @formatter:off
 		resultPackageResponse.filter(payload -> payload.result() != null && !payload.result().isEmpty())
 				.map(ResultPackageResponse::result)
@@ -80,8 +72,7 @@ public class JavaMigration {
 		var sdkmanBrokerPlatform = Broker.platform(packageResponse.operatingSystem(), packageResponse.architecture());
 		var sdkmanReleasePlatform = Release.platform(packageResponse.operatingSystem(), packageResponse.architecture());
 
-		boolean sdkmanVersionExists = this.sdkmanClient.findVersion(this.sdkmanProperties.broker().url(),
-				sdkmanVersionWithVendor, sdkmanBrokerPlatform);
+		boolean sdkmanVersionExists = this.sdkmanClient.findVersion(sdkmanVersionWithVendor, sdkmanBrokerPlatform);
 		if (sdkmanVersionExists) {
 			logger.log(Level.INFO, "Version: {0} already exists for platform {1}",
 					new Object[] { sdkmanVersionWithVendor, sdkmanBrokerPlatform });
@@ -95,8 +86,7 @@ public class JavaMigration {
 				var versionRequest = VersionAdapter.toVersionRequest(sdkmanVendor, version, sdkmanReleasePlatform,
 						idsResponse, defaultCandidate);
 				logger.log(Level.INFO, versionRequest.toString());
-				var newVersionResponse = this.sdkmanClient.newVersion(this.sdkmanProperties.release().url(),
-						versionRequest);
+				var newVersionResponse = this.sdkmanClient.newVersion(versionRequest);
 				newVersionResponse.ifPresent(response -> logger.log(Level.INFO, response));
 			});
 	}

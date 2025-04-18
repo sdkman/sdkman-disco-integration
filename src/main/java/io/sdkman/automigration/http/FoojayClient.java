@@ -1,11 +1,12 @@
 package io.sdkman.automigration.http;
 
+import io.sdkman.automigration.properties.FoojayApiProperties;
 import io.sdkman.automigration.wire.in.ResultIdsResponse;
 import io.sdkman.automigration.wire.in.ResultPackageResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
@@ -23,19 +24,27 @@ public class FoojayClient {
                     "latest", List.of("available"));
 	// @formatter:on
 
-	private final RestTemplate restTemplate;
+	private final RestClient restClient;
 
-	public FoojayClient(RestTemplate restTemplate) {
-		this.restTemplate = restTemplate;
+	private final FoojayApiProperties properties;
+
+	public FoojayClient(RestClient restClient, FoojayApiProperties properties) {
+		this.restClient = restClient;
+		this.properties = properties;
 	}
 
-	public Optional<ResultPackageResponse> queryPackages(String url, Map<String, List<String>> queryParams) {
-		var packageUrl = url.concat("/packages");
-		var newUrl = UriComponentsBuilder.fromHttpUrl(packageUrl)
+	public Optional<ResultPackageResponse> queryPackages(Map<String, List<String>> queryParams) {
+		var newUrl = UriComponentsBuilder.fromUriString("/packages")
 			.queryParams(CollectionUtils.toMultiValueMap(queryParams))
 			.encode()
 			.toUriString();
-		var response = this.restTemplate.getForEntity(newUrl, ResultPackageResponse.class);
+		var response = this.restClient.mutate()
+			.baseUrl(properties.url())
+			.build()
+			.get()
+			.uri(newUrl)
+			.retrieve()
+			.toEntity(ResultPackageResponse.class);
 		if (response.getStatusCode() == HttpStatus.OK && response.hasBody()) {
 			return Optional.of(response.getBody());
 		}
@@ -43,7 +52,7 @@ public class FoojayClient {
 	}
 
 	public Optional<ResultIdsResponse> queryUrl(String url) {
-		var response = this.restTemplate.getForEntity(url, ResultIdsResponse.class);
+		var response = this.restClient.mutate().baseUrl(url).build().get().retrieve().toEntity(ResultIdsResponse.class);
 		if (response.getStatusCode() == HttpStatus.OK && response.hasBody()) {
 			return Optional.of(response.getBody());
 		}

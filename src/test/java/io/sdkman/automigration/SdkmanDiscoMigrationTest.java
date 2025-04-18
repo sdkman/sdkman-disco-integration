@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -196,7 +197,7 @@ class SdkmanDiscoMigrationTest {
 	private void sdkmanReleaseMockServer(MockRestServiceServer mockServer, String request) {
 		// @formatter:off
 		mockServer.expect(ExpectedCount.once(), requestTo("http://localhost/release"))
-				.andExpect(content().json(request, true))
+				.andExpect(content().json(request, JsonCompareMode.STRICT))
 				.andExpect(header("Consumer-Key", "any-key"))
 				.andExpect(header("Consumer-Token", "any-token"))
 				.andExpect(header("Accept", "application/json"))

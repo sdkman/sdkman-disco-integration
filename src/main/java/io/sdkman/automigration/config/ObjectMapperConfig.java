@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class ObjectMapperConfig {
 
 	@Bean
