@@ -13,6 +13,7 @@ List of supported vendors:
 * IBM Semeru
 * Gluon GraalVM
 * GraalVM
+* Huawei BiSheng
 * Mandrel
 * Microsoft OpenJDK
 * Oracle
