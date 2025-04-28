@@ -21,7 +21,7 @@ public class PackageAdapter {
 
     private static final Map<String, String> FOOJAY_SDKMAN_JVM_VENDOR_MAPPING = Map.ofEntries(
 			entry("corretto", "amzn"),
-			entry("dragonwell", "albba"),
+			entry("dragonwell", "alibaba"),
 			entry("graalvm_community", "graalce"),
 			entry("graalvm", "graal"),
 			entry("graalvm_ce8", "grl"),
