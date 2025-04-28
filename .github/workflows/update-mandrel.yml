@@ -15,7 +15,7 @@ jobs:
           - distribution-version: 23
             java-version: 17
           - distribution-version: 23
-            java-version: 24
+            java-version: 21
           - distribution-version: 24
             java-version: 24
     runs-on: ubuntu-latest
