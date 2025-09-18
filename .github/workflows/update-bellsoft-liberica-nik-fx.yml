@@ -17,15 +17,15 @@ jobs:
           - distribution-version: 23
             java-version: 21
           - distribution-version: 24
-            java-version: 24
+            java-version: 25
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Java 24
+      - name: Set up Java 25
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: 24
+          java-version: 25
           cache: 'maven'
       - name: Run bellsoft-liberica
         run: ./mvnw spring-boot:run -Dspring-boot.run.arguments="--foojay.java.distribution=liberica_native --foojay.distribution.version=${{ matrix.distribution-version }} --foojay.java.version=${{ matrix.java-version }} --foojay.java.release-status=ga --foojay.java.javafx-bundled=true"
