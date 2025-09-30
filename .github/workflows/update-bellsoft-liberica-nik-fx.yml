@@ -16,7 +16,7 @@ jobs:
             java-version: 17
           - distribution-version: 23
             java-version: 21
-          - distribution-version: 24
+          - distribution-version: 25
             java-version: 25
     runs-on: ubuntu-latest
     steps:
