@@ -6,6 +6,7 @@ public enum Platform {
 	LINUX_64,
 	LINUX_ARM32HF,
 	LINUX_ARM64,
+	LINUX_RISCV64,
 	MAC_OSX,
 	MAC_ARM64,
 	WINDOWS_64,
