@@ -3,6 +3,7 @@ package io.sdkman.automigration.controllers;
 import io.sdkman.automigration.adapters.VersionAdapter;
 import io.sdkman.automigration.logic.Broker;
 import io.sdkman.automigration.adapters.PackageAdapter;
+import io.sdkman.automigration.logic.JavaVersionComparator;
 import io.sdkman.automigration.logic.Package;
 import io.sdkman.automigration.logic.Release;
 import io.sdkman.automigration.http.FoojayClient;
@@ -50,7 +51,7 @@ public class JavaMigration {
 				.stream()
 				.flatMap(Collection::stream)
 				.filter(Package::libericaFilenameDoesNotContainLite)
-				.max(Comparator.comparing(PackageResponse::javaVersion))
+				.max(Comparator.comparing(PackageResponse::javaVersion, JavaVersionComparator.getInstance()))
 				.ifPresent(packageResponse -> {
 					var sdkmanVersion = Version.format(packageResponse);
 					sdkmanVersion.ifPresent(processVersion(packageResponse, defaultCandidate));
